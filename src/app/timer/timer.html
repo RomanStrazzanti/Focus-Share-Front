@@ -1,0 +1,18 @@
+<div class="timer-container">
+  <h1>Timer Focus & Share</h1>
+
+  <div class="time-display">
+    {{ formatTime(timeLeft) }}
+  </div>
+
+  <div class="controls">
+    <button (click)="startTimer(1500)" [disabled]="timerActive">Démarrer Travail (25 min)</button>
+    <button (click)="startTimer(300)" [disabled]="timerActive">Démarrer Pause (5 min)</button>
+    <button (click)="pauseTimer()" [disabled]="!timerActive">Pause</button>
+    <button (click)="stopTimer()" [disabled]="!timerActive && timeLeft === 0">Arrêter & Réinitialiser</button>
+  </div>
+
+  <div class="audio-status">
+    <p>Musique d'ambiance : **{{ (audioService.isPlaying$ | async) ? 'En lecture' : 'En pause' }}**</p>
+    </div>
+</div>
