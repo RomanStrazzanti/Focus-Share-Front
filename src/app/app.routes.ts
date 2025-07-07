@@ -8,5 +8,9 @@ export const routes: Routes = [
   {
     path: 'login',
     loadComponent: () => import('./login/login').then(m => m.LoginComponent),
-  }
+  },
+  {
+    path: 'timer',
+    loadComponent: () => import('./timer/timer').then(m => m.TimerComponent),
+  },
 ];

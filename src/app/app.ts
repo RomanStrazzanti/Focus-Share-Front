@@ -3,6 +3,7 @@
 import { Component } from '@angular/core';
 // import { RouterOutlet } from '@angular/router'; // <-- REMOVE THIS LINE if not used
 import { CommonModule } from '@angular/common';
+import { RouterOutlet } from '@angular/router';
 import { TimerComponent } from './timer/timer';
 
 @Component({
@@ -11,6 +12,7 @@ import { TimerComponent } from './timer/timer';
   imports: [
     // RouterOutlet, // <-- REMOVE RouterOutlet from here too
     CommonModule,
+    RouterOutlet,
     TimerComponent
   ],
   templateUrl: './app.html',
