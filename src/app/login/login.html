@@ -1,0 +1,11 @@
+<div class="login-container">
+  <h2>Connexion à Supabase</h2>
+  <input type="email" [(ngModel)]="email" placeholder="Email" />
+  <input type="password" [(ngModel)]="password" type="password" placeholder="Mot de passe" />
+  <button (click)="login()">Se connecter</button>
+
+  <div *ngIf="token">
+    <p><strong>Access Token :</strong></p>
+    <textarea readonly rows="5" style="width: 100%;">{{ token }}</textarea>
+  </div>
+</div>
