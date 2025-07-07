@@ -3,7 +3,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription, interval } from 'rxjs';
 import { takeWhile } from 'rxjs/operators';
 import { CommonModule } from '@angular/common'; // <-- ADD THIS IMPORT for CommonModule
-import { AudioService } from '../services/audio';
+import { AudioService } from '../services/audio/audio';
 
 @Component({
   selector: 'app-timer',
