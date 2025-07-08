@@ -13,4 +13,8 @@ export const routes: Routes = [
     path: 'timer',
     loadComponent: () => import('./timer/timer').then(m => m.TimerComponent),
   },
+  {
+    path: 'forum',
+    loadComponent: () => import('./forum/forum').then(m => m.ForumComponent),
+  },
 ];

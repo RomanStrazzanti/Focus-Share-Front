@@ -6,6 +6,7 @@ import {
 } from '@angular/ssr/node';
 import express from 'express';
 import { join } from 'node:path';
+import cors from 'cors';
 
 const browserDistFolder = join(import.meta.dirname, '../browser');
 
@@ -34,6 +35,11 @@ app.use(
     redirect: false,
   }),
 );
+
+app.use(cors({
+  origin: 'http://localhost:4200',
+  credentials: true // si tu utilises des cookies, sinon tu peux l’enlever
+}));
 
 /**
  * Handle all other requests by rendering the Angular application.

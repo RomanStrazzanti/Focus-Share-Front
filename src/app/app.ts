@@ -12,8 +12,7 @@ import { TimerComponent } from './timer/timer';
   imports: [
     // RouterOutlet, // <-- REMOVE RouterOutlet from here too
     CommonModule,
-    RouterOutlet,
-    TimerComponent
+    RouterOutlet
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
