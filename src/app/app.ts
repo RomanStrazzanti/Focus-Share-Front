@@ -1,18 +1,17 @@
-// app.ts
+// src/app/app.ts
 
 import { Component } from '@angular/core';
-// import { RouterOutlet } from '@angular/router'; // <-- REMOVE THIS LINE if not used
-import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
-import { TimerComponent } from './timer/timer';
+import { CommonModule } from '@angular/common'; // Nécessaire pour les directives communes
+import { RouterOutlet } from '@angular/router'; // Si vous utilisez le routing dans app.html
+import { TimerComponent } from './timer/timer'; // <-- Assurez-vous que le chemin et le nom sont corrects
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
-    // RouterOutlet, // <-- REMOVE RouterOutlet from here too
-    CommonModule,
-    RouterOutlet
+    CommonModule, // Fournit des directives comme *ngIf, *ngFor, et les pipes comme async
+    RouterOutlet, // Si vous utilisez <router-outlet> dans app.html
+    TimerComponent // Votre composant Timer doit être importé ici pour être utilisé dans app.html
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
