@@ -10,8 +10,8 @@ import { TimerComponent } from './timer/timer'; // Assurez-vous du bon chemin et
   standalone: true,
   imports: [
     CommonModule,
-    RouterOutlet, // Gardez-le si vous avez <router-outlet> dans app.html
-    TimerComponent // Très important : doit être importé si vous utilisez <app-timer> dans app.html
+    RouterOutlet, 
+    TimerComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
