@@ -6,13 +6,69 @@
   </div>
 
   <div class="controls">
-    <button (click)="startTimer(1500)" [disabled]="timerActive">Démarrer Travail (25 min)</button>
-    <button (click)="startTimer(300)" [disabled]="timerActive">Démarrer Pause (5 min)</button>
-    <button (click)="pauseTimer()" [disabled]="!timerActive">Pause</button>
-    <button (click)="stopTimer()" [disabled]="!timerActive && timeLeft === 0">Arrêter & Réinitialiser</button>
+    <div class="duration-selection">
+      <label for="session-duration">Durée de la session :</label>
+      <select
+        id="session-duration"
+        [value]="selectedDurationValue"    (change)="onDurationChange($event)" [disabled]="timerActive"            >
+        <option *ngFor="let duration of availableDurations" [value]="duration.value">
+          {{ duration.label }}
+        </option>
+      </select>
+    </div>
+
+    <button
+      (click)="togglePausePlay()"
+      [disabled]="timeLeft === 0 && !timerActive"
+    >
+      {{ timerActive ? 'Pause' : 'Reprendre' }}
+    </button>
+
+    <button (click)="stopTimer()" [disabled]="!timerActive && timeLeft === 0">
+      Arrêter & Réinitialiser
+    </button>
+  </div>
+
+  <div class="audio-selection">
+    <h2>Sélectionner une ambiance</h2>
+    <div class="sound-buttons">
+      <button
+        (click)="selectSound(null)"
+        [class.selected]="selectedSound === null"
+        [disabled]="timerActive"
+      >
+        Aucun son
+      </button>
+
+      <button
+        *ngFor="let sound of availableSounds"
+        (click)="selectSound(sound)"
+        [class.selected]="selectedSound?.path === sound.path"
+        [disabled]="timerActive"
+      >
+        {{ sound.name }}
+      </button>
+    </div>
+
+    <div class="volume-control">
+      <label for="volume-slider">Volume:</label>
+      <input
+        id="volume-slider"
+        type="range"
+        min="0"
+        max="1"
+        step="0.01"
+        [value]="currentVolume"     (input)="onVolumeChange($event)" >
+      <span>{{ (currentVolume * 100).toFixed(0) }}%</span> </div>
   </div>
 
   <div class="audio-status">
-    <p>Musique d'ambiance : **{{ (audioService.isPlaying$ | async) ? 'En lecture' : 'En pause' }}**</p>
-    </div>
+    <p>
+      Musique d'ambiance :
+      <strong>
+        {{ selectedSound ? selectedSound.name : 'Aucun son' }}
+        ({{ (audioService.isPlaying$ | async) ? 'En lecture' : 'En pause' }})
+      </strong>
+    </p>
+  </div>
 </div>

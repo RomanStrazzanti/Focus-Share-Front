@@ -1,61 +1,257 @@
+/* src/app/timer/timer.css */
+
 .timer-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  min-height: 100vh;
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f7f6;
+  color: #333;
   padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background-color: #f9f9f9;
-  font-family: Arial, sans-serif;
-  max-width: 400px;
-  margin: 20px auto; 
+  box-sizing: border-box;
 }
 
 h1 {
-  color: #333;
-  margin-bottom: 20px;
+  color: #2c3e50;
+  margin-bottom: 30px;
+  font-size: 2.5em;
+  text-align: center;
 }
 
 .time-display {
-  font-size: 4em;
+  font-size: 5em;
   font-weight: bold;
   color: #007bff;
-  margin-bottom: 30px;
-  padding: 10px 20px;
-  border: 2px solid #007bff;
-  border-radius: 10px;
-  background-color: #e6f2ff;
+  margin-bottom: 40px;
+  background-color: #e9ecef;
+  padding: 20px 40px;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  min-width: 250px;
+  text-align: center;
 }
 
 .controls {
   display: flex;
-  gap: 10px; 
-  margin-bottom: 20px;
+  flex-wrap: wrap; /* Permet aux éléments de passer à la ligne si l'espace est insuffisant */
+  justify-content: center;
+  gap: 15px; /* Espace entre les boutons et la sélection de durée */
+  margin-bottom: 40px;
 }
 
-button {
-  padding: 10px 20px;
-  font-size: 1em;
+.controls button {
+  padding: 12px 25px;
+  font-size: 1.1em;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+  min-width: 180px; /* Largeur minimale pour les boutons */
+}
+
+.controls button:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.controls button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Styles spécifiques pour les boutons de contrôle du minuteur */
+.controls button:nth-child(2) { /* Play/Pause/Reprendre */
+  background-color: #28a745; /* Vert pour Play */
+  color: white;
+}
+.controls button:nth-child(2):hover:not(:disabled) {
+  background-color: #218838;
+}
+
+.controls button:nth-child(3) { /* Arrêter & Réinitialiser */
+  background-color: #dc3545; /* Rouge pour Stop */
+  color: white;
+}
+.controls button:nth-child(3):hover:not(:disabled) {
+  background-color: #c82333;
+}
+
+
+/* NOUVEAU: Styles pour la sélection de durée */
+.duration-selection {
+  display: flex;
+  flex-direction: column; /* Label au-dessus du select */
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px; /* Espace sous la sélection de durée */
+}
+
+.duration-selection label {
+  font-weight: bold;
+  color: #555;
+  font-size: 1.1em;
+}
+
+.duration-selection select {
+  padding: 10px 15px;
+  border: 1px solid #a0a0a0;
+  border-radius: 8px;
+  background-color: white;
+  font-size: 1.1em;
+  cursor: pointer;
+  min-width: 180px; /* Pour correspondre à la largeur des boutons */
+
+  /* Styles pour cacher la flèche par défaut du navigateur et ajouter la nôtre */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007bff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13%205.7L146.2%20202.7%2018.6%2075.1a17.6%2017.6%200%200%200-24.7%200L.8%2090.8a17.6%2017.6%200%200%200%200%2024.7l130.4%20130.4c6.9%206.9%2017.9%206.9%2024.7%200l130.4-130.4a17.6%2017.6%200%200%200%200-24.7l-15.5-15.5z%22%2F%3E%3C%2Fsvg%3E');
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 14px auto;
+  padding-right: 35px; /* Pour laisser de l'espace pour la flèche */
+}
+
+.duration-selection select:disabled {
+  background-color: #f0f0f0;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.audio-selection {
+  margin-top: 30px;
+  padding: 25px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  width: 100%;
+  max-width: 600px; /* Limite la largeur de la section audio */
+}
+
+.audio-selection h2 {
+  color: #4CAF50;
+  margin-bottom: 20px;
+  font-size: 1.8em;
+}
+
+.sound-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.sound-buttons button {
+  padding: 10px 18px;
+  font-size: 1em;
+  border: 1px solid #007bff;
+  border-radius: 20px;
+  background-color: white;
+  color: #007bff;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.sound-buttons button:hover:not(:disabled) {
+  background-color: #e0f2ff;
+}
+
+.sound-buttons button.selected {
   background-color: #007bff;
   color: white;
-  transition: background-color 0.3s ease;
+  border-color: #007bff;
+}
 
-  &:hover:not([disabled]) {
-    background-color: #0056b3;
-  }
+.sound-buttons button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  border-color: #a0a0a0;
+  color: #a0a0a0;
+  background-color: #f0f0f0;
+}
 
-  &:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-  }
+.volume-control {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+
+.volume-control label {
+  font-weight: bold;
+  color: #555;
+  white-space: nowrap;
+}
+
+.volume-control input[type="range"] {
+  width: 150px;
+  height: 8px;
+  -webkit-appearance: none;
+  background: #ddd;
+  border-radius: 5px;
+  outline: none;
+  transition: background 0.2s;
+}
+
+.volume-control input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #007bff;
+  cursor: pointer;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+}
+
+.volume-control input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #007bff;
+  cursor: pointer;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+}
+
+.volume-control input[type="range"]::-ms-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #007bff;
+  cursor: pointer;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+}
+
+.volume-control input[type="range"]::-moz-range-track {
+  background: #ddd;
+  border-radius: 5px;
+}
+.volume-control input[type="range"]::-moz-range-progress {
+  background: #007bff;
+  border-radius: 5px;
+}
+
+.volume-control span {
+  font-size: 0.9em;
+  color: #666;
+  width: 40px;
+  text-align: right;
 }
 
 .audio-status {
+  margin-top: 25px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
   font-size: 0.9em;
   color: #666;
+}
+
+.audio-status strong {
+  color: #333;
 }
