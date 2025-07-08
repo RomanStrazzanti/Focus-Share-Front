@@ -4,6 +4,27 @@ import { TimerComponent, MockUserSettingsService } from './timer'; // Importe le
 import { AudioService } from '../services/audio/audio'; // Importe le vrai service AudioService
 import { of } from 'rxjs';
 
+// --- Mock du service AudioService ---
+// Si votre TimerComponent utilise un AudioService, vous devez le mocker.
+class MockAudioService {
+  private currentAudio: HTMLAudioElement | null = null;
+  playSound = jasmine.createSpy('playSound').and.callFake((path: string) => {
+    // Simule la lecture du son
+    this.currentAudio = { play: jasmine.createSpy('play'), pause: jasmine.createSpy('pause') } as any;
+    console.log(`MockAudioService: Playing sound from ${path}`);
+  });
+  stopSound = jasmine.createSpy('stopSound').and.callFake(() => {
+    // Simule l'arrêt du son
+    if (this.currentAudio) {
+      this.currentAudio.pause();
+      this.currentAudio = null;
+    }
+    console.log('MockAudioService: Sound stopped');
+  });
+  // Si vous avez une propriété 'currentPlayingSound' dans le service, mockez-la aussi
+  currentPlayingSound: string | null = null;
+}
+
 // Décrit la suite de tests pour le TimerComponent
 describe('TimerComponent', () => {
   let component: TimerComponent; // Instance du composant à tester
