@@ -28,7 +28,7 @@ export class LoginComponent {
 
     this.token = data.session?.access_token || '';
     localStorage.setItem('access_token', this.token);
-    this.router.navigate(['/forum']);
+    this.router.navigate(['/messages']);
     
     console.log('✅ Access Token :', this.token);
     alert('Connexion réussie ! Le token est dans la console.');

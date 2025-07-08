@@ -1,0 +1,31 @@
+<div class="messages-container">
+  <div class="contacts-list">
+    <h3>Contacts</h3>
+    <div *ngIf="loading">Chargement des contacts...</div>
+    <div *ngIf="!loading && contacts.length === 0">Aucun contact trouvé.</div>
+    <ul>
+      <li *ngFor="let c of this.contacts" 
+           (click)="selectContact(c)" 
+          [class.selected]="selectedContact?.id === c.id">
+        {{ c.pseudo }}
+      </li>
+    </ul>
+  </div>
+
+  <div class="conversation" *ngIf="selectedContact">
+    <h3>Conversation avec {{ selectedContact.pseudo }}</h3>
+    <div class="messages">
+      <div *ngFor="let msg of conversation" [class.mine]="msg.sender_id === currentUserId">
+        <p><strong>{{ msg.sender_id === currentUserId ? 'Moi' : selectedContact.pseudo }} :</strong> {{ msg.content }}</p>
+        <small>{{ msg.created_at | date:'short' }}</small>
+      </div>
+    </div>
+
+    <textarea [(ngModel)]="newMessageContent" placeholder="Écrire un message..."></textarea>
+    <button (click)="sendMessage()">Envoyer</button> 
+  </div>
+
+  <div *ngIf="!selectedContact">
+    <p>Sélectionne un contact pour démarrer la conversation.</p>
+  </div>
+</div>

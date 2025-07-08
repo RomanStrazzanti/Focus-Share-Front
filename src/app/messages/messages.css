@@ -1,0 +1,53 @@
+.messages-container {
+  display: flex;
+  gap: 20px;
+}
+
+.contacts-list {
+  width: 200px;
+  border-right: 1px solid #ccc;
+}
+
+.contacts-list ul {
+  list-style: none;
+  padding: 0;
+}
+
+.contacts-list li {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.contacts-list li.selected {
+  background-color: #ddd;
+  font-weight: bold;
+}
+
+.conversation {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+.messages div {
+  margin-bottom: 8px;
+}
+
+.messages div.mine {
+  background-color: #e0ffe0;
+  padding: 5px;
+  border-radius: 5px;
+  align-self: flex-end;
+}
+
+textarea {
+  width: 100%;
+  min-height: 60px;
+  resize: vertical;
+}

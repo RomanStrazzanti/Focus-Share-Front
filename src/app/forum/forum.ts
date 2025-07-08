@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -25,7 +25,7 @@ export class ForumComponent implements OnInit {
   replyContent = '';
   replyToPostId: number | null = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private cd: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.loadPosts();
@@ -34,13 +34,16 @@ export class ForumComponent implements OnInit {
   loadPosts() {
     const token = localStorage.getItem('access_token');
     const headers = { Authorization: `Bearer ${token}` };
-
+ 
+    console.log('Token2:', token);
     this.http.get<Post[]>('http://localhost:3000/api/forum-posts', { headers }).subscribe({
-      next: (data) => this.posts = data,
+      next: (data) => {
+        this.posts = data;
+        this.cd.detectChanges(); // 👈 force Angular à mettre à jour la vue
+      },
       error: (err) => console.error('Erreur chargement posts', err)
     });
   }
-
 
   createPost() {
     if (!this.newPostContent.trim()) return;
@@ -56,7 +59,6 @@ export class ForumComponent implements OnInit {
       error: (err) => console.error('Erreur création post', err)
     });
   }
-
 
   startReply(postId: number) {
     this.replyToPostId = postId;
@@ -81,5 +83,4 @@ export class ForumComponent implements OnInit {
       error: (err) => console.error('Erreur création réponse', err)
     });
   }
-
 }
