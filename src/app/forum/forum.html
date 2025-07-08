@@ -1,0 +1,22 @@
+<div class="forum-container">
+  <h2>Forum public</h2>
+
+  <textarea [(ngModel)]="newPostContent" placeholder="Écrire un nouveau post..."></textarea>
+  <button (click)="createPost()">Publier</button>
+
+  <div *ngFor="let post of posts" class="post">
+    <p><strong>Auteur:</strong> {{ post.author_id }}</p>
+    <p>{{ post.content }}</p>
+    <button (click)="startReply(post.id)">Répondre</button>
+
+    <div *ngIf="replyToPostId === post.id" class="reply-form">
+      <textarea [(ngModel)]="replyContent" placeholder="Écrire une réponse..."></textarea>
+      <button (click)="createReply()">Envoyer</button>
+    </div>
+
+    <div *ngFor="let reply of post.replies" class="reply">
+      <p><em>Réponse de {{ reply.author_id }}:</em></p>
+      <p>{{ reply.content }}</p>
+    </div>
+  </div>
+</div>

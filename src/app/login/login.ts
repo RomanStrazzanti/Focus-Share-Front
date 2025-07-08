@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms'; // ✅ Ajouté ici
 import { CommonModule } from '@angular/common'; // ✅ recommandé
 import { SupabaseService } from '../services/supabase.services';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +16,7 @@ export class LoginComponent {
   password: string = '';
   token: string = '';
 
-  constructor(private supabase: SupabaseService) {}
+  constructor(private supabase: SupabaseService, private router: Router) {}
 
   async login() {
     const { data, error } = await this.supabase.signIn(this.email, this.password);
@@ -26,6 +27,9 @@ export class LoginComponent {
     }
 
     this.token = data.session?.access_token || '';
+    localStorage.setItem('access_token', this.token);
+    this.router.navigate(['/forum']);
+    
     console.log('✅ Access Token :', this.token);
     alert('Connexion réussie ! Le token est dans la console.');
   }

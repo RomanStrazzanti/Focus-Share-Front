@@ -1,0 +1,23 @@
+.forum-container {
+  max-width: 600px;
+  margin: auto;
+  padding: 1rem;
+}
+
+.post, .reply {
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  margin-top: 1rem;
+  border-radius: 4px;
+}
+
+.reply {
+  margin-left: 2rem;
+  background: #f9f9f9;
+}
+
+textarea {
+  width: 100%;
+  min-height: 60px;
+  margin-bottom: 0.5rem;
+}
