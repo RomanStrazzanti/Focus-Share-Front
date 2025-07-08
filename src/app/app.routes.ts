@@ -17,4 +17,8 @@ export const routes: Routes = [
     path: 'forum',
     loadComponent: () => import('./forum/forum').then(m => m.ForumComponent),
   },
+  {
+    path: 'messages',
+    loadComponent: () => import('./messages/messages').then(m => m.MessagesComponent),
+  },
 ];
