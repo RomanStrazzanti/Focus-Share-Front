@@ -1,74 +1,150 @@
-<div class="timer-container">
-  <h1>Timer Focus & Share</h1>
-
-  <div class="time-display">
-    {{ formatTime(timeLeft) }}
+<div class="timer-page">
+  <div class="page-header">
+    <h1>Session de Concentration</h1>
   </div>
 
-  <div class="controls">
-    <div class="duration-selection">
-      <label for="session-duration">Durée de la session :</label>
-      <select
-        id="session-duration"
-        [value]="selectedDurationValue"    (change)="onDurationChange($event)" [disabled]="timerActive"            >
-        <option *ngFor="let duration of availableDurations" [value]="duration.value">
-          {{ duration.label }}
-        </option>
-      </select>
+  <div class="timer-grid">
+    <div class="timer-card">
+      <div class="card-header">
+        <h2></h2>
+      </div>
+
+      <div class="duration-selection">
+        <p class="card-title">Durée de la session</p>
+        <select
+          id="session-duration"
+          [value]="selectedDurationValue"
+          (change)="onDurationChange($event)"
+          [disabled]="timerActive"
+          class="duration-select"
+        >
+          <option
+            *ngFor="let duration of availableDurations"
+            [value]="duration.value"
+          >
+            {{ duration.label }}
+          </option>
+        </select>
+      </div>
+
+      <div class="card-content">
+        <div class="time-display">{{ formatTime(timeLeft) }}</div>
+
+        <div class="timer-controls">
+          <button
+            class="btn btn-primary btn-large btn-bordered"
+            (click)="togglePausePlay()"
+            [disabled]="timeLeft === 0 && !timerActive && selectedDurationValue === 0"
+          >
+            <ng-container *ngIf="timerActive">
+              <img src="assets/img/Break.png" alt="Pause" class="button-icon" />
+              Pause
+            </ng-container>
+            <ng-container *ngIf="!timerActive && timeLeft > 0">
+              <img
+                src="assets/img/Play.png"
+                alt="Reprendre"
+                class="button-icon"
+              />
+              Reprendre
+            </ng-container>
+            <ng-container *ngIf="!timerActive && timeLeft === 0">
+              <img
+                src="assets/img/Play.png"
+                alt="Commencer"
+                class="button-icon"
+              />
+              Démarrer
+            </ng-container>
+          </button>
+
+          <button
+            class="btn btn-secondary btn-large btn-bordered"
+            (click)="stopTimer()"
+            [disabled]="!timerActive && timeLeft === 0"
+          >
+            <img src="assets/img/Stop.png" alt="Arrêter" class="button-icon" />
+            Reset
+          </button>
+        </div>
+
+        <div class="notification-reminder">
+          <div class="reminder-icon">⚠️</div>
+          <div class="reminder-content">
+            <strong>Rappel important</strong>
+            <p>
+              Fermez vos notifications et réseaux sociaux pour une concentration
+              optimale !
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <button
-      (click)="togglePausePlay()"
-      [disabled]="timeLeft === 0 && !timerActive"
-    >
-      {{ timerActive ? 'Pause' : 'Reprendre' }}
-    </button>
+    <div class="audio-card">
+      <div class="card-header">
+        <img src="assets/img/Music.png" alt="Aucun son" class="sound-icon" />
+        <h2>Ambiance Sonore</h2>
+        <p class="card-subtitle">Choisissez un son pour vous accompagner</p>
+      </div>
 
-    <button (click)="stopTimer()" [disabled]="!timerActive && timeLeft === 0">
-      Arrêter & Réinitialiser
-    </button>
-  </div>
+      <div class="card-content">
+        <div class="sound-selection">
+          <div class="sound-grid">
+            <button
+              class="sound-button"
+              [class.selected]="selectedSound === null"
+              [disabled]="timerActive"
+              (click)="selectSound(null)"
+            >
+              <img src="assets/img/Son_Off.png" alt="Aucun son" class="sound-icon" />
+              <span>Aucun son</span>
+            </button>
 
-  <div class="audio-selection">
-    <h2>Sélectionner une ambiance</h2>
-    <div class="sound-buttons">
-      <button
-        (click)="selectSound(null)"
-        [class.selected]="selectedSound === null"
-        [disabled]="timerActive"
-      >
-        Aucun son
-      </button>
+            <button
+              *ngFor="let sound of availableSounds"
+              class="sound-button"
+              [class.selected]="selectedSound?.path === sound.path"
+              [disabled]="timerActive"
+              (click)="selectSound(sound)"
+            >
+              <img [src]="sound.iconPath" [alt]="sound.name" class="sound-icon" />
+              <span>{{ sound.name }}</span>
+            </button>
+          </div>
+        </div>
 
-      <button
-        *ngFor="let sound of availableSounds"
-        (click)="selectSound(sound)"
-        [class.selected]="selectedSound?.path === sound.path"
-        [disabled]="timerActive"
-      >
-        {{ sound.name }}
-      </button>
+        <div class="volume-section" *ngIf="selectedSound">
+          <label for="volume-slider" class="volume-label">
+            Volume : {{ (currentVolume * 100).toFixed(0) }}%
+          </label>
+          <div class="volume-control">
+            <input
+              id="volume-slider"
+              type="range"
+              min="0"
+              max="1"
+              step="0.01"
+              [value]="currentVolume"
+              (input)="onVolumeChange($event)"
+              class="volume-slider"
+            />
+          </div>
+        </div>
+
+        <div class="audio-status">
+          <div class="status-indicator">
+            <span
+              class="status-dot"
+              [class.playing]="audioService.isPlaying$ | async"
+            ></span>
+            <span class="status-text">
+              {{ selectedSound ? selectedSound.name : 'Aucun son' }} ({{
+              (audioService.isPlaying$ | async) ? 'En lecture' : 'En pause' }})
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <div class="volume-control">
-      <label for="volume-slider">Volume:</label>
-      <input
-        id="volume-slider"
-        type="range"
-        min="0"
-        max="1"
-        step="0.01"
-        [value]="currentVolume"     (input)="onVolumeChange($event)" >
-      <span>{{ (currentVolume * 100).toFixed(0) }}%</span> </div>
-  </div>
-
-  <div class="audio-status">
-    <p>
-      Musique d'ambiance :
-      <strong>
-        {{ selectedSound ? selectedSound.name : 'Aucun son' }}
-        ({{ (audioService.isPlaying$ | async) ? 'En lecture' : 'En pause' }})
-      </strong>
-    </p>
   </div>
 </div>

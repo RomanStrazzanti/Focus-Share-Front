@@ -1,257 +1,422 @@
 /* src/app/timer/timer.css */
 
-.timer-container {
+/* Styles pour le conteneur principal de la page */
+.timer-page {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; /* Aligner en haut */
   min-height: 100vh;
-  font-family: 'Arial', sans-serif;
-  background-color: #f4f7f6;
-  color: #333;
-  padding: 20px;
+  font-family: 'Inter', sans-serif; /* Police similaire à l'exemple */
+  background-color: #f9fafb; /* Couleur de fond de la page */
+  color: #1f2937; /* Couleur de texte par défaut */
+  padding: 2rem; /* padding: 32px */
   box-sizing: border-box;
+  width: 100%;
 }
 
-h1 {
-  color: #2c3e50;
-  margin-bottom: 30px;
-  font-size: 2.5em;
+/* Styles pour l'en-tête de la page */
+.page-header {
   text-align: center;
+  margin-bottom: 2rem; /* margin-bottom: 32px */
 }
 
-.time-display {
-  font-size: 5em;
+.page-header h1 {
+  font-size: 2.25rem; /* text-3xl */
   font-weight: bold;
-  color: #007bff;
-  margin-bottom: 40px;
-  background-color: #e9ecef;
-  padding: 20px 40px;
-  border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  min-width: 250px;
-  text-align: center;
+  color: #1f2937; /* text-gray-800 */
+  margin-bottom: 0.5rem; /* margin-bottom: 8px */
 }
 
-.controls {
+.page-subtitle {
+  font-size: 1rem; /* text-base */
+  color: #4b5563; /* text-gray-600 */
+  margin-top: 0.5rem; /* margin-top: 8px */
+}
+
+/* Grille principale pour les cartes (Minuteur et Audio) */
+.timer-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* Par défaut une colonne sur mobile */
+  gap: 1.5rem; /* gap: 24px */
+  width: 100%;
+  max-width: 1024px; /* max-w-5xl, pour centrer le contenu */
+  margin: 0 auto; /* Centrage */
+}
+
+/* Styles de base pour toutes les "Cards" (Minuteur et Audio) */
+.timer-card,
+.audio-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb; /* border-gray-200 */
+  border-radius: 0.5rem; /* rounded-lg */
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); /* shadow-sm */
+  padding: 1.5rem; /* p-6 */
   display: flex;
-  flex-wrap: wrap; /* Permet aux éléments de passer à la ligne si l'espace est insuffisant */
-  justify-content: center;
-  gap: 15px; /* Espace entre les boutons et la sélection de durée */
-  margin-bottom: 40px;
+  flex-direction: column;
 }
 
-.controls button {
-  padding: 12px 25px;
-  font-size: 1.1em;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.1s ease;
-  min-width: 180px; /* Largeur minimale pour les boutons */
+/* En-tête des cartes */
+.card-header {
+  text-align: center;
+  margin-bottom: 1.5rem; /* margin-bottom: 24px */
 }
 
-.controls button:hover:not(:disabled) {
-  transform: translateY(-2px);
+.card-header h2 {
+  font-size: 1.5rem; /* text-2xl */
+  font-weight: 600; /* font-semibold */
+  color: #1f2937; /* text-gray-800 */
+  margin-bottom: 0.5rem; /* margin-bottom: 8px */
 }
 
-.controls button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-  opacity: 0.7;
+.card-subtitle {
+  font-size: 0.875rem; /* text-sm */
+  color: #4b5563; /* text-gray-600 */
 }
 
-/* Styles spécifiques pour les boutons de contrôle du minuteur */
-.controls button:nth-child(2) { /* Play/Pause/Reprendre */
-  background-color: #28a745; /* Vert pour Play */
-  color: white;
-}
-.controls button:nth-child(2):hover:not(:disabled) {
-  background-color: #218838;
+/* Contenu des cartes */
+.card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* space-y-6 */
 }
 
-.controls button:nth-child(3) { /* Arrêter & Réinitialiser */
-  background-color: #dc3545; /* Rouge pour Stop */
-  color: white;
-}
-.controls button:nth-child(3):hover:not(:disabled) {
-  background-color: #c82333;
+/* Affichage du temps */
+.time-display {
+  font-size: 5rem; /* text-8xl */
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace; /* font-mono */
+  font-weight: bold;
+  color: #2563eb; /* text-blue-600 */
+  text-align: center;
+  margin-bottom: 1.5rem; /* mb-6 */
 }
 
-
-/* NOUVEAU: Styles pour la sélection de durée */
+/* Sélection de la durée */
 .duration-selection {
   display: flex;
-  flex-direction: column; /* Label au-dessus du select */
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 10px; /* Espace sous la sélection de durée */
+  gap: 0.5rem; /* gap-2 */
+  margin-bottom: 1.5rem; /* mb-6 */
 }
 
 .duration-selection label {
-  font-weight: bold;
-  color: #555;
-  font-size: 1.1em;
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 500; /* font-medium */
+  color: #4b5563; /* text-gray-700 */
 }
 
-.duration-selection select {
-  padding: 10px 15px;
-  border: 1px solid #a0a0a0;
-  border-radius: 8px;
-  background-color: white;
-  font-size: 1.1em;
-  cursor: pointer;
-  min-width: 180px; /* Pour correspondre à la largeur des boutons */
-
-  /* Styles pour cacher la flèche par défaut du navigateur et ajouter la nôtre */
+.duration-select {
+  display: block;
+  width: 100%;
+  max-width: 200px; /* Limite la largeur du select */
+  padding: 0.5rem 0.75rem; /* px-3 py-2 */
+  border: 1px solid #d1d5db; /* border-gray-300 */
+  border-radius: 0.375rem; /* rounded-md */
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+  font-size: 0.875rem; /* sm:text-sm */
   -webkit-appearance: none;
-  -moz-appearance: none;
   appearance: none;
-  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007bff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13%205.7L146.2%20202.7%2018.6%2075.1a17.6%2017.6%200%200%200-24.7%200L.8%2090.8a17.6%2017.6%200%200%200%200%2024.7l130.4%20130.4c6.9%206.9%2017.9%206.9%2024.7%200l130.4-130.4a17.6%2017.6%200%200%200%200-24.7l-15.5-15.5z%22%2F%3E%3C%2Fsvg%3E');
+  -moz-appearance: none;
+  background-color: #ffffff;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236b7280%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13%205.7L146.2%20202.7%2018.6%2075.1a17.6%2017.6%200%200%200-24.7%200L.8%2090.8a17.6%2017.6%200%200%200%200%2024.7l130.4%20130.4c6.9%206.9%2017.9%206.9%2024.7%200l130.4-130.4a17.6%2017.6%200%200%200%200-24.7l-15.5-15.5z%22%2F%3E%3C%2Fsvg%3E'); /* Flèche grise */
   background-repeat: no-repeat;
-  background-position: right 10px center;
-  background-size: 14px auto;
-  padding-right: 35px; /* Pour laisser de l'espace pour la flèche */
+  background-position: right 0.75rem center;
+  background-size: 0.625rem auto;
+  padding-right: 2.5rem;
 }
 
-.duration-selection select:disabled {
-  background-color: #f0f0f0;
+.duration-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 1px #3b82f6;
+}
+
+.duration-select:disabled {
+  background-color: #f3f4f6;
   cursor: not-allowed;
   opacity: 0.7;
 }
 
-.audio-selection {
-  margin-top: 30px;
-  padding: 25px;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  background-color: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  text-align: center;
-  width: 100%;
-  max-width: 600px; /* Limite la largeur de la section audio */
-}
 
-.audio-selection h2 {
-  color: #4CAF50;
-  margin-bottom: 20px;
-  font-size: 1.8em;
-}
-
-.sound-buttons {
+/* Contrôles du minuteur (boutons Play/Pause/Reset) */
+.timer-controls {
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
-  gap: 10px;
-  margin-bottom: 25px;
+  gap: 1rem; /* gap: 16px */
+  margin-bottom: 1.5rem; /* mb-6 */
 }
 
-.sound-buttons button {
-  padding: 10px 18px;
-  font-size: 1em;
-  border: 1px solid #007bff;
-  border-radius: 20px;
-  background-color: white;
-  color: #007bff;
+/* Styles de base pour tous les boutons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  border-radius: 0.375rem; /* rounded-md */
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 500; /* font-medium */
+  padding: 0.75rem 2rem; /* px-8 py-2 */
+  height: 3rem; /* h-12 */
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
-.sound-buttons button:hover:not(:disabled) {
-  background-color: #e0f2ff;
+.btn:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
 }
 
-.sound-buttons button.selected {
-  background-color: #007bff;
-  color: white;
-  border-color: #007bff;
-}
-
-.sound-buttons button:disabled {
-  opacity: 0.6;
+.btn:disabled {
+  pointer-events: none;
+  opacity: 0.5;
   cursor: not-allowed;
-  border-color: #a0a0a0;
-  color: #a0a0a0;
-  background-color: #f0f0f0;
+}
+
+/* NOUVEAU: Styles pour la bordure des boutons */
+.btn-bordered {
+  border: 1px solid #d1d5db; /* Couleur de bordure par défaut */
+}
+
+/* Bouton primaire (Démarrer/Pause/Reprendre) */
+.btn-primary {
+  background-color: #2563eb; /* bg-blue-600 */
+  color: #ffffff; /* text-white */
+  border-color: #2563eb; /* Bordure de la même couleur que le fond */
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #1d4ed8; /* hover:bg-blue-700 */
+  border-color: #1d4ed8;
+}
+
+/* Bouton secondaire (Reset) */
+.btn-secondary {
+  background-color: #ffffff;
+  color: #1f2937;
+  border-color: #e5e7eb; /* Couleur de bordure plus claire */
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: #f3f4f6;
+  color: #1f2937;
+  border-color: #d1d5db;
+}
+
+/* Icônes dans les boutons */
+.button-icon {
+  width: 1.25rem; /* w-5 */
+  height: 1.25rem; /* h-5 */
+  margin-right: 0.5rem; /* mr-2 */
+  vertical-align: middle;
+}
+
+/* Rappel de notification */
+.notification-reminder {
+  background-color: #fffbeb; /* bg-amber-50 */
+  border: 1px solid #fde68a; /* border-amber-200 */
+  border-radius: 0.5rem; /* rounded-lg */
+  padding: 1rem; /* p-4 */
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem; /* gap-2 */
+  color: #92400e; /* text-amber-700 */
+}
+
+.reminder-icon {
+  font-size: 1.25rem; /* text-xl */
+  color: #b45309; /* text-amber-800 */
+  line-height: 1; /* Pour aligner l'emoji */
+}
+
+.reminder-content strong {
+  font-weight: 500; /* font-medium */
+  color: #b45309; /* text-amber-800 */
+}
+
+.reminder-content p {
+  font-size: 0.875rem; /* text-sm */
+  margin-top: 0.25rem; /* mt-1 */
+}
+
+/* Sélection de son */
+.sound-selection {
+  margin-bottom: 1.5rem; /* mb-6 */
+}
+
+.sound-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 0.75rem; /* gap: 12px */
+}
+
+.sound-button {
+  height: 70px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem; /* gap: 4px */
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  border-radius: 0.375rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  border: 1px solid #e5e7eb; /* Bordure par défaut pour les boutons de son */
+  background-color: #ffffff;
+  color: #1f2937;
+  padding: 0.5rem; /* p-2 */
+}
+
+.sound-button:hover:not(:disabled) {
+  background-color: #f3f4f6;
+  color: #1f2937;
+}
+
+.sound-button.selected {
+  background-color: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb; /* Bordure de la même couleur que le fond quand sélectionné */
+}
+
+.sound-button.selected:hover {
+  background-color: #1d4ed8;
+}
+
+.sound-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sound-icon {
+  width: 28px; /* Ajustez la taille de vos icônes ici */
+  height: 28px; /* Assurez-vous qu'elles sont carrées pour un meilleur rendu */
+  object-fit: contain; /* Pour s'assurer que l'image tient bien dans la taille définie */
+  margin-bottom: 0.25rem; /* Espace entre l'icône et le texte */
+}
+
+/* Contrôle du volume */
+.volume-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; /* space-y-3 */
+  width: 100%;
+  text-align: left;
+}
+
+.volume-label {
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 500; /* font-medium */
+  color: #4b5563; /* text-gray-700 */
 }
 
 .volume-control {
-  margin-top: 20px;
-  display: flex;
+  display: flex; /* Pour contenir le slider */
   align-items: center;
-  gap: 10px;
-  justify-content: center;
+  width: 100%;
 }
 
-.volume-control label {
-  font-weight: bold;
-  color: #555;
-  white-space: nowrap;
-}
-
-.volume-control input[type="range"] {
-  width: 150px;
-  height: 8px;
-  -webkit-appearance: none;
-  background: #ddd;
-  border-radius: 5px;
-  outline: none;
-  transition: background 0.2s;
-}
-
-.volume-control input[type="range"]::-webkit-slider-thumb {
+.volume-slider {
+  width: 100%;
+  height: 0.5rem; /* h-2 */
+  background-color: #e5e7eb; /* bg-gray-200 */
+  border-radius: 0.5rem; /* rounded-lg */
   -webkit-appearance: none;
   appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #007bff;
   cursor: pointer;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+  outline: none;
+  accent-color: #3b82f6; /* Pour la couleur du curseur */
 }
 
-.volume-control input[type="range"]::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 1rem; /* w-4 */
+  height: 1rem; /* h-4 */
   border-radius: 50%;
-  background: #007bff;
+  background: #2563eb;
   cursor: pointer;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.volume-control input[type="range"]::-ms-thumb {
-  width: 20px;
-  height: 20px;
+.volume-slider::-moz-range-thumb {
+  width: 1rem;
+  height: 1rem;
   border-radius: 50%;
-  background: #007bff;
+  background: #2563eb;
   cursor: pointer;
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-.volume-control input[type="range"]::-moz-range-track {
-  background: #ddd;
-  border-radius: 5px;
-}
-.volume-control input[type="range"]::-moz-range-progress {
-  background: #007bff;
-  border-radius: 5px;
-}
-
-.volume-control span {
-  font-size: 0.9em;
-  color: #666;
-  width: 40px;
-  text-align: right;
-}
-
+/* Statut audio */
 .audio-status {
-  margin-top: 25px;
-  padding-top: 15px;
-  border-top: 1px solid #eee;
-  font-size: 0.9em;
-  color: #666;
+  text-align: center;
+  font-size: 0.875rem; /* text-sm */
+  color: #4b5563; /* text-gray-700 */
+  margin-top: 1.5rem; /* mt-6 */
 }
 
-.audio-status strong {
-  color: #333;
+.status-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem; /* gap-2 */
+}
+
+.status-dot {
+  width: 0.5rem; /* w-2 */
+  height: 0.5rem; /* h-2 */
+  border-radius: 50%;
+  background-color: #ef4444; /* Rouge pour "En pause" */
+}
+
+.status-dot.playing {
+  background-color: #22c55e; /* Vert pour "En lecture" */
+}
+
+.status-text {
+  font-weight: 600; /* font-semibold */
+  color: #1f2937; /* text-gray-800 */
+}
+
+
+/* Media Queries pour la responsivité */
+@media (min-width: 768px) { /* md: */
+  .timer-grid {
+    grid-template-columns: repeat(2, 1fr); /* Deux colonnes sur les écrans moyens et grands */
+  }
+
+  .timer-card,
+  .audio-card {
+    padding: 2rem; /* p-8 */
+  }
+
+  .card-header {
+    margin-bottom: 2rem; /* mb-8 */
+  }
+
+  .time-display {
+    font-size: 6rem; /* text-8xl */
+  }
+
+  .timer-controls {
+    flex-direction: row; /* Boutons en ligne */
+  }
+}
+
+@media (max-width: 767px) {
+  .time-display {
+    font-size: 4em;
+  }
+
+  .btn {
+    width: 100%; /* Boutons pleine largeur sur mobile */
+  }
+
+  .sound-grid {
+    grid-template-columns: 1fr; /* Une colonne sur mobile */
+  }
 }
