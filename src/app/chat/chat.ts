@@ -17,25 +17,26 @@ export class ChatComponent {
 
   constructor(private chatService: ChatService) {}
 
-  sendMessage() {
+  async sendMessage() {
     const prompt = this.newMessage.trim();
     if (!prompt) return;
 
-    // Ajouter le message utilisateur à la liste
     this.messages.push({ text: prompt, from: 'user' });
     this.newMessage = '';
     this.loading = true;
 
-    // Appeler l’API Olama
-    this.chatService.generateResponse(prompt).subscribe({
-      next: (res) => {
-        this.messages.push({ text: res.response, from: 'bot' });
-        this.loading = false;
-      },
-      error: (err) => {
-        this.messages.push({ text: 'Erreur lors de la requête', from: 'bot' });
-        this.loading = false;
-      }
-    });
+    const botMessage = { text: '', from: 'bot' as const };
+    this.messages.push(botMessage);
+
+    try {
+      await this.chatService.streamResponse(prompt, (chunk: string) => {
+        botMessage.text += chunk;
+      });
+    } catch (err) {
+      botMessage.text = 'Erreur lors de la génération.';
+      console.error(err);
+    } finally {
+      this.loading = false;
+    }
   }
 }
