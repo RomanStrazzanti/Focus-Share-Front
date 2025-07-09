@@ -22,7 +22,7 @@ export interface Task {
   completed: boolean;
   subtasks: Subtask[]; // Tableau de sous-tâches
   created_at: string; // Date de création en format string
-  isUpdating: boolean; // <-- MODIFIÉ: isUpdating est maintenant un booléen obligatoire
+  isUpdating: boolean; // isUpdating est maintenant un booléen obligatoire
 }
 
 @Component({
@@ -206,7 +206,7 @@ export class TasksComponent implements OnInit, OnDestroy {
       completed: false,
       subtasks: this.newTask.subtasks?.filter(st => st.title.trim() !== '') || [],
       created_at: now,
-      isUpdating: false, // <-- Initialisé à false
+      isUpdating: false, // Initialisé à false
     };
 
     this.tasks.unshift(optimisticTask);
@@ -238,6 +238,12 @@ export class TasksComponent implements OnInit, OnDestroy {
   }
 
   async toggleTaskCompletion(task: Task): Promise<void> {
+    // NOUVEAU: Empêche la double exécution si une mise à jour est déjà en cours
+    if (task.isUpdating) {
+      console.warn(`[toggleTaskCompletion] Tâche ${task.id} est déjà en cours de mise à jour. Ignoré.`);
+      return;
+    }
+
     if (!this.currentUserId || task.user_id !== this.currentUserId) {
       console.warn('Non autorisé à modifier cette tâche.');
       this.errorMessage = 'Vous n\'êtes pas autorisé à modifier cette tâche.';
@@ -289,6 +295,12 @@ export class TasksComponent implements OnInit, OnDestroy {
   }
 
   async toggleSubtaskCompletion(task: Task, subtask: Subtask): Promise<void> {
+    // NOUVEAU: Empêche la double exécution si la tâche parente est déjà en cours de mise à jour
+    if (task.isUpdating) {
+      console.warn(`[toggleSubtaskCompletion] Tâche parente ${task.id} est déjà en cours de mise à jour. Ignoré.`);
+      return;
+    }
+
     if (!this.currentUserId || task.user_id !== this.currentUserId) {
       console.warn('Non autorisé à modifier cette sous-tâche.');
       this.errorMessage = 'Vous n\'êtes pas autorisé à modifier cette sous-tâche.';
