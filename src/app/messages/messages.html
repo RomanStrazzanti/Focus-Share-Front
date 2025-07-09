@@ -1,12 +1,12 @@
 <div class="messages-container">
 
   <div class="contacts-list">
-    <h3>Contacts</h3>
+    <h3 class="section-title">Contacts</h3>
     <div *ngIf="loading">Chargement des contacts...</div>
     <div *ngIf="!loading && contacts.length === 0">Aucun contact trouvé.</div>
     <ul>
       <li *ngFor="let c of this.contacts" 
-           (click)="selectContact(c)" 
+          (click)="selectContact(c)" 
           [class.selected]="selectedContact?.id === c.id">
         {{ c.pseudo }}
       </li>
@@ -14,7 +14,7 @@
   </div>
 
   <div class="conversation" *ngIf="selectedContact">
-    <h3>Conversation avec {{ selectedContact.pseudo }}</h3>
+    <h3 class="section-title">Conversation avec {{ selectedContact.pseudo }}</h3>
     <div class="messages">
       <div *ngFor="let msg of conversation" [class.mine]="msg.sender_id === currentUserId">
         <p><strong>{{ msg.sender_id === currentUserId ? 'Moi' : selectedContact.pseudo }} :</strong> {{ msg.content }}</p>
@@ -27,6 +27,6 @@
   </div>
 
   <div *ngIf="!selectedContact">
-    <p>Sélectionne un contact pour démarrer la conversation.</p>
+    <p class="centered-info-message">Sélectionne un contact pour démarrer la conversation.</p>
   </div>
 </div>
