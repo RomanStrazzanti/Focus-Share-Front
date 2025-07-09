@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router'; // À garder si vous utilisez <router-outlet> dans app.html
 import { TimerComponent } from './timer/timer'; // Assurez-vous du bon chemin et du nom du fichier
 import { HeaderComponent } from './header/header';
+import { TodoListComponent } from './todo-list/todo-list';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +14,8 @@ import { HeaderComponent } from './header/header';
     CommonModule,
     RouterOutlet, 
     TimerComponent,
-    HeaderComponent
+    HeaderComponent,
+    TodoListComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
