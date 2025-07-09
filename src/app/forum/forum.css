@@ -1,23 +1,140 @@
+/* Styles du forum - Homogénéisé avec le design Shadcn-like */
+
 .forum-container {
-  max-width: 600px;
-  margin: auto;
-  padding: 1rem;
+  max-width: 600px; /* Largeur maximale pour le contenu du forum */
+  margin: 2rem auto; /* Centre le conteneur avec plus d'espace vertical */
+  padding: 1.5rem; /* Padding interne généreux */
+  background-color: #ffffff; /* Fond blanc comme les cartes du timer */
+  border-radius: 0.5rem; /* Bords arrondis (8px) */
+  font-family: 'Inter', sans-serif; /* Assure la police Inter */
+  color: #1f2937; /* Couleur de texte principale */
 }
 
-.post, .reply {
-  border: 1px solid #ccc;
-  padding: 0.5rem;
-  margin-top: 1rem;
-  border-radius: 4px;
+.forum-container h2 {
+  font-size: 1.75rem; /* Taille de titre plus grande (environ 28px) */
+  font-weight: 700; /* Gras */
+  color: #1f2937; /* Couleur foncée pour le titre */
+  margin-bottom: 1.5rem; /* Espace sous le titre */
+  text-align: center; /* Centre le titre */
 }
 
-.reply {
-  margin-left: 2rem;
-  background: #f9f9f9;
-}
-
+/* Styles pour les zones de texte (nouveau post et réponses) */
 textarea {
   width: 100%;
-  min-height: 60px;
-  margin-bottom: 0.5rem;
+  min-height: 5rem; /* Hauteur minimale de 80px */
+  padding: 0.75rem 1rem; /* Padding interne */
+  margin-bottom: 1rem; /* Marge sous la zone de texte */
+  border: 1px solid #e5e7eb; /* Bordure fine grise */
+  border-radius: 0.375rem; /* Bords arrondis */
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  color: #1f2937;
+  resize: vertical; /* Permet le redimensionnement vertical uniquement */
+  background-color: #f9fafb; /* Fond légèrement grisé pour les inputs */
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  width: 35rem;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #2563eb; /* Bordure bleue au focus */
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2); /* Ombre bleue au focus */
+}
+
+/* Styles pour les boutons */
+button {
+  display: inline-flex; /* Pour centrer le texte et icônes si ajoutées */
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem 1.25rem; /* Padding (10px 20px) */
+  background-color: #2563eb; /* Couleur de bouton principale (bleu) */
+  color: #ffffff; /* Texte blanc */
+  border: 1px solid #2563eb; /* Bordure identique à la couleur de fond */
+  border-radius: 0.375rem; /* Bords arrondis */
+  font-size: 0.9375rem; /* Taille de police */
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  margin-right: 0.5rem; /* Espace entre les boutons si plusieurs */
+  margin-bottom: 1rem; /* Espace sous les boutons (utile pour le bouton "Publier") */
+}
+
+button:hover {
+  background-color: #1d4ed8; /* Bleu légèrement plus foncé au survol */
+  border-color: #1d4ed8;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+button:active {
+  background-color: #1e40af; /* Encore plus foncé au clic */
+  border-color: #1e40af;
+}
+
+/* Styles pour les posts individuels */
+.post {
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb; /* Bordure plus douce */
+  padding: 1rem; /* Padding interne */
+  margin-top: 1.5rem; /* Plus d'espace au-dessus du post */
+  border-radius: 0.375rem; /* Bords arrondis */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04); /* Légère ombre */
+  width: 35rem;
+}
+
+.post p {
+  margin-bottom: 0.5rem; /* Espacement entre les paragraphes */
+  line-height: 1.5; /* Hauteur de ligne pour une meilleure lisibilité */
+  color: #374151; /* Couleur de texte plus douce pour le contenu */
+}
+
+.post p strong {
+  color: #1f2937; /* Auteur en couleur principale */
+}
+
+/* Styles pour le formulaire de réponse */
+.reply-form {
+  margin-top: 1rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed #d1d5db; /* Bordure discrète pour séparer */
+}
+
+.reply-form textarea {
+  min-height: 3.5rem; /* Hauteur plus petite pour les réponses */
+}
+
+/* Styles pour les réponses individuelles */
+.reply {
+  background-color: #f9fafb; /* Fond légèrement plus clair pour les réponses */
+  border: 1px solid #e5e7eb;
+  padding: 0.75rem 1rem; /* Padding plus petit pour les réponses */
+  margin-top: 0.75rem; /* Espace au-dessus de chaque réponse */
+  margin-left: 2rem; /* Indentation pour les réponses */
+  border-radius: 0.375rem;
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.03); /* Ombre encore plus subtile */
+  position: relative; /* Pour positionner une barre si besoin */
+  min-height: 3.5rem; /* AJOUTÉ: Hauteur minimale pour correspondre à la textarea de réponse */
+  display: flex; /* AJOUTÉ: Pour que min-height fonctionne mieux avec le contenu */
+  flex-direction: column; /* AJOUTÉ: Pour que min-height fonctionne mieux avec le contenu */
+  justify-content: center; /* AJOUTÉ: Centre le contenu verticalement si la hauteur minimale est supérieure au contenu */
+}
+
+.reply::before {
+  content: '';
+  position: absolute;
+  left: 1rem; /* Positionne la barre un peu à l'intérieur */
+  top: 0;
+  bottom: 0;
+  width: 1px; /* Réduit l'épaisseur de la barre à 1px */
+  background-color: #e5e7eb; /* Rend la couleur plus claire pour être plus subtile */
+  border-radius: 2px;
+}
+
+.reply p {
+  margin-bottom: 0.3rem;
+  font-size: 0.9375rem; /* Texte des réponses légèrement plus petit */
+  color: #4b5563; /* Couleur de texte plus douce */
+}
+
+.reply p em {
+  color: #374151; /* Auteur de la réponse */
 }

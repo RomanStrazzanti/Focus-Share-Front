@@ -1,46 +1,143 @@
+/* Styles du chat - Homogénéisé avec le design Shadcn-like */
+
 .chat-container {
-  max-width: 600px;
-  margin: auto;
-  border: 1px solid #ddd;
-  padding: 15px;
+  max-width: 600px; /* Largeur maximale du conteneur de chat */
+  margin: 2rem auto; /* Centre le conteneur avec plus d'espace vertical */
+  border: 1px solid #e5e7eb; /* Bordure subtile */
+  border-radius: 0.5rem; /* Bords arrondis */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* Ombre légère */
+  padding: 1.5rem; /* Padding interne */
   display: flex;
   flex-direction: column;
-  height: 400px;
+  height: 600px; /* Hauteur fixe pour la zone de chat */
+  background-color: #ffffff; /* Fond blanc */
+  font-family: 'Inter', sans-serif; /* Police Inter */
+  color: #1f2937; /* Couleur de texte principale */
+  gap: 1rem; /* Espacement entre les éléments flex enfants (messages et input-area) */
 }
 
 .messages {
-  flex: 1;
-  overflow-y: auto;
-  margin-bottom: 10px;
+  flex: 1; /* Prend tout l'espace disponible */
+  overflow-y: auto; /* Permet le défilement vertical si le contenu dépasse */
+  padding-right: 0.5rem; /* Pour éviter que la barre de défilement ne chevauche le texte */
+  display: flex; /* MODIFIÉ: Rend .messages un conteneur flex */
+  flex-direction: column; /* MODIFIÉ: Arrange les messages verticalement */
+  gap: 0.5rem; /* AJOUTÉ: Espacement entre les bulles de message */
 }
 
+/* Styles pour les messages de l'utilisateur */
 .user-msg {
   text-align: right;
-  background-color: #e0ffe0;
-  margin: 5px 0;
-  padding: 8px;
-  border-radius: 8px;
+  background-color: #e0f2fe; /* Bleu très clair, similaire à bg-blue-50 ou 100 */
+  /* SUPPRIMÉ: margin: 0.5rem 0; - Le gap du parent gère maintenant l'espacement */
+  padding: 0.75rem 1rem; /* Padding interne des bulles */
+  border-radius: 0.5rem; /* Bords arrondis */
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03); /* Légère ombre */
+  word-wrap: break-word; /* Casse les mots longs pour éviter le dépassement */
+  max-width: 85%; /* Limite la largeur de la bulle */
+  margin-left: auto; /* Aligne à droite */
+  color: #1f2937; /* Couleur de texte foncée */
 }
 
+/* Styles pour les messages du bot */
 .bot-msg {
   text-align: left;
-  background-color: #f0f0f0;
-  margin: 5px 0;
-  padding: 8px;
-  border-radius: 8px;
+  background-color: #f3f4f6; /* Gris très clair, similaire à bg-gray-100 */
+  /* SUPPRIMÉ: margin: 0.5rem 0; - Le gap du parent gère maintenant l'espacement */
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+  word-wrap: break-word;
+  max-width: 85%; /* Limite la largeur de la bulle */
+  margin-right: auto; /* Aligne à gauche */
+  color: #1f2937;
 }
 
+.user-msg strong,
+.bot-msg strong {
+  font-weight: 600; /* Semi-gras pour les noms d'expéditeur */
+  color: #2563eb; /* Couleur bleue pour l'expéditeur */
+}
+
+/* Styles pour la zone de saisie */
 .input-area {
   display: flex;
-  gap: 10px;
+  gap: 0.75rem; /* Espacement entre la textarea et le bouton */
+  align-items: flex-end; /* Aligne le bouton en bas de la textarea */
 }
 
 textarea {
-  flex: 1;
-  resize: none;
-  height: 50px;
+  flex: 1; /* Prend l'espace restant */
+  min-height: 3.5rem; /* Hauteur minimale de 56px */
+  padding: 0.75rem 1rem; /* Padding interne */
+  border: 1px solid #e5e7eb; /* Bordure fine grise */
+  border-radius: 0.375rem; /* Bords arrondis */
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  color: #1f2937;
+  resize: none; /* Empêche le redimensionnement manuel */
+  background-color: #f9fafb; /* Fond légèrement grisé */
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
+textarea:focus {
+  outline: none;
+  border-color: #2563eb; /* Bordure bleue au focus */
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2); /* Ombre bleue au focus */
+}
+
+/* Styles pour le bouton d'envoi */
 button {
-  width: 80px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  border-radius: 0.375rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  padding: 0.625rem 1.25rem; /* Padding (10px 20px) */
+  background-color: #2563eb; /* Couleur de bouton principale (bleu) */
+  color: #ffffff; /* Texte blanc */
+  border: 1px solid #2563eb; /* Bordure identique à la couleur de fond */
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  min-width: 5rem; /* Largeur minimale du bouton (80px) */
+  height: 3.5rem; /* Hauteur du bouton pour correspondre à la textarea */
+}
+
+button:hover:not(:disabled) {
+  background-color: #1d4ed8; /* Bleu légèrement plus foncé au survol */
+  border-color: #1d4ed8;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+button:active {
+  background-color: #1e40af; /* Encore plus foncé au clic */
+  border-color: #1e40af;
+}
+
+button:disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Media Queries pour la responsivité */
+@media (max-width: 640px) {
+  .chat-container {
+    padding: 1rem; /* Réduit le padding sur mobile */
+    margin: 1rem auto; /* Réduit la marge sur mobile */
+    height: 80vh; /* Utilise une hauteur relative sur mobile */
+  }
+
+  .input-area {
+    flex-direction: column; /* Empile la textarea et le bouton sur mobile */
+    gap: 0.5rem;
+  }
+
+  .input-area button {
+    width: 100%; /* Bouton pleine largeur sur mobile */
+    height: auto; /* Hauteur automatique */
+    padding: 0.75rem 1.25rem; /* Ajuste le padding */
+  }
 }
