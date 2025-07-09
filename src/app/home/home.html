@@ -1,0 +1,23 @@
+<!-- src/app/home/home.component.html -->
+<div class="home-container">
+  <div class="welcome-section card">
+    <h1 class="welcome-title">Bonjour, {{ userName }} !</h1>
+    <p class="motivation-phrase">{{ dailyMotivation }}</p>
+  </div>
+
+  <div class="action-cards-grid">
+    <div class="action-card card" (click)="goToTimer()">
+      <div class="card-icon">⏰</div> <!-- Emoji ou SVG pour l'icône -->
+      <h2 class="card-title">Prêt pour une nouvelle session de révision ?</h2>
+      <p class="card-description">Concentrez-vous et optimisez votre temps avec notre minuteur Pomodoro.</p>
+      <button class="btn btn-primary">Aller au minuteur</button>
+    </div>
+
+    <div class="action-card card" (click)="goToForum()">
+      <div class="card-icon">💬</div> <!-- Emoji ou SVG pour l'icône -->
+      <h2 class="card-title">Besoin d'aide ou d'échanger ?</h2>
+      <p class="card-description">Rejoignez la communauté, posez vos questions et partagez vos connaissances.</p>
+      <button class="btn btn-secondary">Aller au forum</button>
+    </div>
+  </div>
+</div>
