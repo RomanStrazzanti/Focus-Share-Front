@@ -13,20 +13,23 @@
   background-color: #ffffff; /* Fond blanc */
   font-family: 'Inter', sans-serif; /* Police Inter */
   color: #1f2937; /* Couleur de texte principale */
+  gap: 1rem; /* Espacement entre les éléments flex enfants (messages et input-area) */
 }
 
 .messages {
   flex: 1; /* Prend tout l'espace disponible */
   overflow-y: auto; /* Permet le défilement vertical si le contenu dépasse */
-  margin-bottom: 1rem; /* Marge sous la zone des messages */
   padding-right: 0.5rem; /* Pour éviter que la barre de défilement ne chevauche le texte */
+  display: flex; /* MODIFIÉ: Rend .messages un conteneur flex */
+  flex-direction: column; /* MODIFIÉ: Arrange les messages verticalement */
+  gap: 0.5rem; /* AJOUTÉ: Espacement entre les bulles de message */
 }
 
 /* Styles pour les messages de l'utilisateur */
 .user-msg {
   text-align: right;
   background-color: #e0f2fe; /* Bleu très clair, similaire à bg-blue-50 ou 100 */
-  margin: 0.5rem 0; /* Marge verticale entre les messages */
+  /* SUPPRIMÉ: margin: 0.5rem 0; - Le gap du parent gère maintenant l'espacement */
   padding: 0.75rem 1rem; /* Padding interne des bulles */
   border-radius: 0.5rem; /* Bords arrondis */
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03); /* Légère ombre */
@@ -40,7 +43,7 @@
 .bot-msg {
   text-align: left;
   background-color: #f3f4f6; /* Gris très clair, similaire à bg-gray-100 */
-  margin: 0.5rem 0;
+  /* SUPPRIMÉ: margin: 0.5rem 0; - Le gap du parent gère maintenant l'espacement */
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);

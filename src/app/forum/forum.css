@@ -6,7 +6,6 @@
   padding: 1.5rem; /* Padding interne généreux */
   background-color: #ffffff; /* Fond blanc comme les cartes du timer */
   border-radius: 0.5rem; /* Bords arrondis (8px) */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* Ombre légère pour un effet de carte */
   font-family: 'Inter', sans-serif; /* Assure la police Inter */
   color: #1f2937; /* Couleur de texte principale */
 }
@@ -33,6 +32,7 @@ textarea {
   resize: vertical; /* Permet le redimensionnement vertical uniquement */
   background-color: #f9fafb; /* Fond légèrement grisé pour les inputs */
   transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  width: 35rem;
 }
 
 textarea:focus {
@@ -111,6 +111,10 @@ button:active {
   border-radius: 0.375rem;
   box-shadow: 0 0 1px rgba(0, 0, 0, 0.03); /* Ombre encore plus subtile */
   position: relative; /* Pour positionner une barre si besoin */
+  min-height: 3.5rem; /* AJOUTÉ: Hauteur minimale pour correspondre à la textarea de réponse */
+  display: flex; /* AJOUTÉ: Pour que min-height fonctionne mieux avec le contenu */
+  flex-direction: column; /* AJOUTÉ: Pour que min-height fonctionne mieux avec le contenu */
+  justify-content: center; /* AJOUTÉ: Centre le contenu verticalement si la hauteur minimale est supérieure au contenu */
 }
 
 .reply::before {
@@ -119,8 +123,8 @@ button:active {
   left: 1rem; /* Positionne la barre un peu à l'intérieur */
   top: 0;
   bottom: 0;
-  width: 2px; /* Épaisseur de la barre */
-  background-color: #d1d5db; /* Couleur de la barre d'indentation */
+  width: 1px; /* Réduit l'épaisseur de la barre à 1px */
+  background-color: #e5e7eb; /* Rend la couleur plus claire pour être plus subtile */
   border-radius: 2px;
 }
 
