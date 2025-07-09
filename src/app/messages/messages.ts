@@ -62,23 +62,19 @@ export class MessagesComponent implements OnInit {
   async loadContacts(token: string) {
     this.loading = true;
     const headers = { Authorization: `Bearer ${token}` };
- 
-    console.log('step2');
-     this.contacts = await firstValueFrom(this.http.get<Profile[]>(`${this.apiBase}/contacts`, { headers }));
-   console.log('step3', this.contacts);
-     /*
-    this.http.get<Profile[]>(`${this.apiBase}/contacts`, { headers }).subscribe({
-      next: (data) => {
-        this.contacts = data;
-        this.loading = false;
-        console.log('step3', this.contacts);
-      },
-      error: (err) => {
-        console.error('Erreur chargement contacts:', err);
-        this.loading = false;
-      }
-    });*/
+
+    try {
+      this.contacts = await firstValueFrom(
+        this.http.get<Profile[]>(`${this.apiBase}/contacts`, { headers })
+      );
+      console.log('Contacts chargés :', this.contacts);
+    } catch (err) {
+      console.error('Erreur lors du chargement des contacts :', err);
+    } finally {
+      this.loading = false; // OBLIGATOIRE pour débloquer l'interface
+    }
   }
+
  
   selectContact(contact: Profile) {
     this.selectedContact = contact;
