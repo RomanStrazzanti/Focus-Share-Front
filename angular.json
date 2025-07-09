@@ -33,7 +33,7 @@
             "polyfills": ["zone.js"],
             "scripts": [],
             "styles": ["src/styles.css"],
-            "tsConfig": "tsconfig.app.json",
+            "tsConfig": "tsconfig.app.json"
 
           }
         },
