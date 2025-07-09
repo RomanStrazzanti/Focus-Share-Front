@@ -21,4 +21,8 @@ export const routes: Routes = [
     path: 'messages',
     loadComponent: () => import('./messages/messages').then(m => m.MessagesComponent),
   },
+  {
+    path: 'chat',
+    loadComponent: () => import('./chat/chat').then(m => m.ChatComponent),
+  },
 ];
