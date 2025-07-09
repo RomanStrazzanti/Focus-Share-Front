@@ -9,7 +9,7 @@ export class SupabaseService {
   private supabase: SupabaseClient;
 
   private readonly SUPABASE_URL: string = 'https://ufrvlyqirwtlqudptdhd.supabase.co';
-  private readonly SUPABASE_ANON_KEY: string = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmcnZlyqirwtlqudptdhdIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4NzMxOTAsImV4cCI6MjA2NzQ0OTE5MH0._2Cg5w3gJaypKpJOCK-B7WvdZvm6VCBlkq6M7MaAV_Y';
+  private readonly SUPABASE_ANON_KEY: string = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmcnZseXFpcnd0bHF1ZHB0ZGhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE4NzMxOTAsImV4cCI6MjA2NzQ0OTE5MH0._2Cg5w3gJaypKpJOCK-B7WvdZvm6VCBlkq6M7MaAV_Y';
 
   constructor() {
     this.supabase = createClient(this.SUPABASE_URL, this.SUPABASE_ANON_KEY);
