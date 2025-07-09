@@ -29,7 +29,7 @@ export class ChatComponent {
       .replace(/\n/g, '<br>');                          // sauts de ligne
 
     return this.sanitizer.bypassSecurityTrustHtml(html);
-  }
+}
 
   async sendMessage() {
     const prompt = this.newMessage.trim();
