@@ -1,7 +1,8 @@
 <div class="chat-container">
   <div class="messages">
     <div *ngFor="let msg of messages" [ngClass]="{'user-msg': msg.from === 'user', 'bot-msg': msg.from === 'bot'}">
-      <strong>{{ msg.from === 'user' ? 'Vous' : 'Bot' }} :</strong> {{ msg.text }}
+      <strong>{{ msg.from === 'user' ? 'Vous' : 'Bot' }} :</strong>
+      <div [innerHTML]="formatMessage(msg.text)"></div>
     </div>
   </div>
 
