@@ -1,6 +1,6 @@
 {
   "/api/generate": {
-    "target": "http://10.74.18.53:11434",
+    "target": "http://10.74.18.69:11434",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"
