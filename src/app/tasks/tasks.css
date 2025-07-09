@@ -163,10 +163,29 @@
   font-size: 0.875rem; /* Plus petite police */
 }
 
-.add-task-btn {
-  width: 100%;
-  margin-top: 1.5rem; /* Espace au-dessus du bouton d'ajout de tâche */
+/* Styles pour le nouveau bouton "Nouvelle Tâche" */
+.add-new-task-btn {
+  width: fit-content; /* S'adapte au contenu */
+  margin: 0 auto 1.5rem auto; /* Centre le bouton et ajoute de l'espace en bas */
+  display: flex; /* Pour aligner l'icône et le texte */
+  align-items: center;
+  gap: 0.5rem; /* Espace entre l'icône et le texte */
 }
+
+/* Styles pour le groupe de boutons "Ajouter" et "Annuler" dans le formulaire */
+.form-actions {
+  display: flex;
+  justify-content: flex-end; /* Aligne les boutons à droite */
+  gap: 1rem; /* Espace entre les boutons */
+  margin-top: 1.5rem; /* Espace au-dessus des boutons */
+}
+
+.form-actions .btn-primary,
+.form-actions .btn-secondary {
+  flex-grow: 0; /* Ne pas prendre toute la largeur */
+  width: auto; /* Largeur automatique */
+}
+
 
 /* Les icônes SVG n'ont pas besoin de classes spécifiques comme .button-icon-left ou .icon-small si elles sont stylisées directement par leur parent */
 .delete-btn:hover svg { /* Cible le SVG à l'intérieur du bouton de suppression */
@@ -183,6 +202,20 @@
   border-radius: 0.375rem;
   margin-top: 1rem;
 }
+
+/* --- NOUVEAU: Styles pour le message d'erreur --- */
+.error-message {
+  background-color: #fee2e2; /* bg-red-100 */
+  color: #dc2626; /* text-red-600 */
+  border: 1px solid #fca5a5; /* border-red-300 */
+  border-radius: 0.375rem; /* rounded-md */
+  padding: 0.75rem 1rem; /* p-3 */
+  margin-bottom: 1.5rem; /* mb-6 */
+  text-align: center;
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+
 
 /* --- Section des tâches existantes --- */
 .tasks-list {
@@ -210,6 +243,12 @@
   accent-color: #2563eb; /* Couleur de la checkbox */
 }
 
+.task-header input[type="checkbox"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+
 .task-header .task-title {
   font-size: 1.125rem; /* Taille du titre de la tâche */
   font-weight: 600;
@@ -229,6 +268,11 @@
   display: flex;
   gap: 0.25rem; /* Petit espace entre les boutons d'action */
   flex-shrink: 0;
+}
+
+.task-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .task-notes {
@@ -275,6 +319,11 @@
   accent-color: #2563eb;
 }
 
+.task-subtasks li input[type="checkbox"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 /* Styles pour les éléments complétés */
 .completed .task-title,
 .completed-text {
@@ -315,6 +364,38 @@
 }
 
 /* Pas besoin de styles spécifiques pour .completed-tasks-list car il contient des .task-item qui ont déjà leurs styles */
+
+/* --- NOUVEAUX STYLES POUR LA TRANSITION DU FORMULAIRE --- */
+.new-task-form {
+  overflow: hidden; /* Cache le contenu qui dépasse pendant la transition */
+  transition: max-height 0.4s ease-in-out, opacity 0.4s ease-in-out, padding 0.4s ease-in-out;
+  /* padding sera animé aussi pour un effet plus doux */
+}
+
+.new-task-form.hidden-form {
+  max-height: 0;
+  opacity: 0;
+  padding-top: 0; /* Réduit le padding pour un effet de fermeture */
+  padding-bottom: 0; /* Réduit le padding pour un effet de fermeture */
+  margin-top: 0; /* Réduit la marge pour un effet de fermeture */
+  margin-bottom: 0; /* Réduit la marge pour un effet de fermeture */
+  border-width: 0; /* Cache la bordure */
+  box-shadow: none; /* Supprime l'ombre */
+  pointer-events: none; /* Empêche les interactions quand le formulaire est masqué */
+}
+
+.new-task-form.visible-form {
+  max-height: 2000px; /* Une valeur très grande pour s'adapter automatiquement */
+  opacity: 1;
+  /* Réinitialise le padding et les marges aux valeurs par défaut de .card */
+  padding: 1.5rem;
+  margin-top: 0; /* Ou la marge par défaut si elle est définie ailleurs */
+  margin-bottom: 0; /* Ou la marge par défaut si elle est définie ailleurs */
+  border-width: 1px; /* Réaffiche la bordure */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); /* Réaffiche l'ombre */
+  pointer-events: auto; /* Permet les interactions */
+}
+
 
 /* Media Queries pour la responsivité */
 @media (max-width: 768px) {
@@ -377,5 +458,15 @@
 
   .completed-tasks-header .card-title {
     font-size: 1rem; /* Plus petit sur mobile */
+  }
+
+  .form-actions {
+    flex-direction: column; /* Empile les boutons du formulaire sur mobile */
+    gap: 0.5rem;
+  }
+
+  .form-actions .btn-primary,
+  .form-actions .btn-secondary {
+    width: 100%; /* Boutons pleine largeur sur mobile */
   }
 }
