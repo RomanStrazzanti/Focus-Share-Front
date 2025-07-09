@@ -25,7 +25,8 @@ export const routes: Routes = [
     path: 'chat',
     loadComponent: () => import('./chat/chat').then(m => m.ChatComponent),
   },
-  {path: 'todolist',
-    loadComponent: () => import('./todo-list/todo-list').then(m => m.TodoListComponent),
-  },
+  { 
+    path: 'tasks',
+    loadComponent: () => import('./tasks/tasks').then(m => m.TasksComponent),
+  }
 ];
