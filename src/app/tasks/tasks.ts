@@ -22,6 +22,7 @@ export interface Task {
   completed: boolean;
   subtasks: Subtask[]; // Tableau de sous-tâches
   created_at: string; // Date de création en format string
+  isUpdating: boolean; // <-- MODIFIÉ: isUpdating est maintenant un booléen obligatoire
 }
 
 @Component({
@@ -45,6 +46,8 @@ export class TasksComponent implements OnInit, OnDestroy {
   loading = false;
   currentUserId: string | null = null;
   showCompletedTasks: boolean = false; // Propriété pour contrôler l'affichage des tâches terminées
+  showNewTaskForm: boolean = false; // Propriété pour contrôler l'affichage du formulaire de nouvelle tâche
+  errorMessage: string | null = null; // Pour afficher les messages d'erreur
 
   private apiUrl = 'http://localhost:3000/api/tasks';
 
@@ -168,7 +171,8 @@ export class TasksComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.http.get<Task[]>(this.apiUrl, this.getAuthHeaders()).subscribe({
       next: (data) => {
-        this.tasks = data.filter(task => task.user_id === this.currentUserId);
+        // Initialise isUpdating à false pour toutes les tâches chargées
+        this.tasks = data.filter(task => task.user_id === this.currentUserId).map(task => ({ ...task, isUpdating: false }));
         this.sortTasks(); // Applique le tri après le chargement
         this.loading = false;
         this.cdr.detectChanges();
@@ -176,6 +180,7 @@ export class TasksComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Erreur chargement des tâches:', err);
+        this.errorMessage = 'Erreur lors du chargement des tâches. Veuillez réessayer.';
         this.loading = false;
         this.cdr.detectChanges();
       }
@@ -185,9 +190,11 @@ export class TasksComponent implements OnInit, OnDestroy {
   createTask() {
     if (!this.newTask.title?.trim() || !this.currentUserId) {
       console.warn('Titre de tâche vide ou utilisateur non connecté.');
+      this.errorMessage = 'Le titre de la tâche ne peut pas être vide.';
       return;
     }
 
+    this.errorMessage = null; // Réinitialise le message d'erreur
     const tempId = 'temp-' + this.generateUniqueId();
     const now = new Date().toISOString();
     const optimisticTask: Task = {
@@ -199,6 +206,7 @@ export class TasksComponent implements OnInit, OnDestroy {
       completed: false,
       subtasks: this.newTask.subtasks?.filter(st => st.title.trim() !== '') || [],
       created_at: now,
+      isUpdating: false, // <-- Initialisé à false
     };
 
     this.tasks.unshift(optimisticTask);
@@ -211,15 +219,18 @@ export class TasksComponent implements OnInit, OnDestroy {
       next: (taskFromServer) => {
         const index = this.tasks.findIndex(t => t.id === tempId);
         if (index !== -1) {
-          this.tasks[index] = taskFromServer;
+          // S'assurer que isUpdating est conservé ou réinitialisé correctement
+          this.tasks[index] = { ...taskFromServer, isUpdating: false };
         }
         this.sortTasks(); // Applique le tri après la synchronisation
         this.cdr.detectChanges();
+        this.showNewTaskForm = false; // Masque le formulaire après création réussie
         console.log('Tâche créée et synchronisée:', taskFromServer);
       },
       error: (err) => {
         this.tasks = this.tasks.filter(t => t.id !== tempId);
         this.newTask = originalNewTask;
+        this.errorMessage = 'Erreur lors de la création de la tâche. Veuillez réessayer.';
         this.cdr.detectChanges();
         console.error('Erreur création tâche, annulation optimiste:', err);
       }
@@ -229,13 +240,19 @@ export class TasksComponent implements OnInit, OnDestroy {
   async toggleTaskCompletion(task: Task): Promise<void> {
     if (!this.currentUserId || task.user_id !== this.currentUserId) {
       console.warn('Non autorisé à modifier cette tâche.');
+      this.errorMessage = 'Vous n\'êtes pas autorisé à modifier cette tâche.';
       return;
     }
 
-    const originalCompleted = task.completed;
-    const originalSubtasks = JSON.parse(JSON.stringify(task.subtasks));
+    this.errorMessage = null; // Réinitialise le message d'erreur
+    task.isUpdating = true; // Marque la tâche comme étant en cours de mise à jour
+    console.log(`[toggleTaskCompletion] Début pour la tâche: ${task.title}, ID: ${task.id}`);
+    console.log(`[toggleTaskCompletion] État initial 'completed': ${task.completed}`);
 
-    // Mettre à jour l'état de la tâche et des sous-tâches
+    const originalCompleted = task.completed;
+    const originalSubtasks = JSON.parse(JSON.stringify(task.subtasks)); // Copie profonde
+
+    // Mettre à jour l'état de la tâche et des sous-tâches (optimiste)
     task.completed = !task.completed;
     if (task.completed) {
       task.subtasks.forEach((subtask: Subtask) => subtask.done = true);
@@ -243,22 +260,30 @@ export class TasksComponent implements OnInit, OnDestroy {
       task.subtasks.forEach((subtask: Subtask) => subtask.done = false);
     }
 
-    this.sortTasks(); // Applique le tri après la modification
-    this.cdr.detectChanges();
+    console.log(`[toggleTaskCompletion] État optimiste 'completed': ${task.completed}`);
+    this.sortTasks(); // Applique le tri après la modification optimiste
+    this.cdr.detectChanges(); // Met à jour l'UI immédiatement
 
     try {
+      console.log(`[toggleTaskCompletion] Envoi de la requête PUT pour la tâche: ${task.id}`);
       await this.http.put<Task>(
         `${this.apiUrl}/${task.id}`,
         { completed: task.completed, subtasks: task.subtasks },
         this.getAuthHeaders()
       ).toPromise();
 
-      console.log('Tâche mise à jour (optimiste):', task);
+      console.log(`[toggleTaskCompletion] Requête PUT réussie pour la tâche: ${task.id}. Nouvel état: ${task.completed}`);
     } catch (e) {
-      console.error('Exception lors de la mise à jour de la tâche, annulation optimiste:', e);
+      console.error(`[toggleTaskCompletion] Erreur lors de la mise à jour de la tâche ${task.id}, annulation optimiste:`, e);
+      // Annulation des modifications optimistes
       task.completed = originalCompleted;
       task.subtasks = originalSubtasks;
       this.sortTasks(); // Re-tri en cas d'erreur
+      this.errorMessage = 'Erreur lors de la mise à jour de la tâche. Veuillez vérifier votre connexion ou réessayer.';
+      this.cdr.detectChanges(); // Met à jour l'UI pour refléter l'annulation
+      console.log(`[toggleTaskCompletion] État annulé pour la tâche ${task.id}. Revert à 'completed': ${task.completed}`);
+    } finally {
+      task.isUpdating = false; // Termine la mise à jour, que ce soit un succès ou un échec
       this.cdr.detectChanges();
     }
   }
@@ -266,8 +291,14 @@ export class TasksComponent implements OnInit, OnDestroy {
   async toggleSubtaskCompletion(task: Task, subtask: Subtask): Promise<void> {
     if (!this.currentUserId || task.user_id !== this.currentUserId) {
       console.warn('Non autorisé à modifier cette sous-tâche.');
+      this.errorMessage = 'Vous n\'êtes pas autorisé à modifier cette sous-tâche.';
       return;
     }
+
+    this.errorMessage = null; // Réinitialise le message d'erreur
+    task.isUpdating = true; // Marque la tâche parente comme étant en cours de mise à jour
+    console.log(`[toggleSubtaskCompletion] Début pour sous-tâche: ${subtask.title} de la tâche: ${task.title}`);
+    console.log(`[toggleSubtaskCompletion] État initial sous-tâche 'done': ${subtask.done}, tâche 'completed': ${task.completed}`);
 
     const originalSubtaskDone = subtask.done;
     const originalTaskCompleted = task.completed;
@@ -281,22 +312,30 @@ export class TasksComponent implements OnInit, OnDestroy {
       task.completed = false;
     }
 
-    this.sortTasks(); // Applique le tri après la modification
-    this.cdr.detectChanges();
+    console.log(`[toggleSubtaskCompletion] État optimiste sous-tâche 'done': ${subtask.done}, tâche 'completed': ${task.completed}`);
+    this.sortTasks(); // Applique le tri après la modification optimiste
+    this.cdr.detectChanges(); // Met à jour l'UI immédiatement
 
     try {
+      console.log(`[toggleSubtaskCompletion] Envoi de la requête PUT pour la tâche (via sous-tâche): ${task.id}`);
       await this.http.put<Task>(
         `${this.apiUrl}/${task.id}`,
         { completed: task.completed, subtasks: task.subtasks },
         this.getAuthHeaders()
       ).toPromise();
 
-      console.log('Sous-tâche mise à jour (optimiste):', subtask);
+      console.log(`[toggleSubtaskCompletion] Requête PUT réussie pour la tâche (via sous-tâche): ${task.id}`);
     } catch (e) {
-      console.error('Exception lors de la mise à jour de la sous-tâche, annulation optimiste:', e);
+      console.error(`[toggleSubtaskCompletion] Erreur lors de la mise à jour de la sous-tâche ${subtask.title}, annulation optimiste:`, e);
+      // Annulation des modifications optimistes
       subtask.done = originalSubtaskDone;
       task.completed = originalTaskCompleted;
       this.sortTasks(); // Re-tri en cas d'erreur
+      this.errorMessage = 'Erreur lors de la mise à jour de la sous-tâche. Veuillez vérifier votre connexion ou réessayer.';
+      this.cdr.detectChanges(); // Met à jour l'UI pour refléter l'annulation
+      console.log(`[toggleSubtaskCompletion] État annulé pour sous-tâche ${subtask.title}. Revert à 'done': ${subtask.done}`);
+    } finally {
+      task.isUpdating = false; // Termine la mise à jour
       this.cdr.detectChanges();
     }
   }
@@ -305,14 +344,16 @@ export class TasksComponent implements OnInit, OnDestroy {
     const taskToDelete = this.tasks.find(t => t.id === id);
     if (!this.currentUserId || !taskToDelete || taskToDelete.user_id !== this.currentUserId) {
       console.warn('Non autorisé à supprimer cette tâche.');
+      this.errorMessage = 'Vous n\'êtes pas autorisé à supprimer cette tâche.';
       return;
     }
 
+    this.errorMessage = null; // Réinitialise le message d'erreur
     console.log('Demande de suppression de tâche avec ID:', id);
 
-    const originalTasks = [...this.tasks];
-    this.tasks = this.tasks.filter(t => t.id !== id);
-    this.cdr.detectChanges();
+    const originalTasks = [...this.tasks]; // Copie pour le rollback
+    this.tasks = this.tasks.filter(t => t.id !== id); // Suppression optimiste
+    this.cdr.detectChanges(); // Met à jour l'UI immédiatement
 
     this.http.delete(`${this.apiUrl}/${id}`, this.getAuthHeaders()).subscribe({
       next: () => {
@@ -320,8 +361,9 @@ export class TasksComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Erreur suppression tâche, annulation optimiste:', err);
-        this.tasks = originalTasks;
-        this.cdr.detectChanges();
+        this.tasks = originalTasks; // Rollback
+        this.errorMessage = 'Erreur lors de la suppression de la tâche. Veuillez réessayer.';
+        this.cdr.detectChanges(); // Met à jour l'UI pour refléter l'annulation
       }
     });
   }
@@ -329,9 +371,11 @@ export class TasksComponent implements OnInit, OnDestroy {
   editTask(task: Task): void {
     if (!this.currentUserId || task.user_id !== this.currentUserId) {
       console.warn('Non autorisé à éditer cette tâche.');
+      this.errorMessage = 'Vous n\'êtes pas autorisé à éditer cette tâche.';
       return;
     }
     console.log('Fonctionnalité d\'édition à implémenter pour la tâche:', task.title);
+    this.errorMessage = null; // Réinitialise le message d'erreur si l'édition n'est pas encore implémentée
   }
 
   addNewSubtask(): void {
