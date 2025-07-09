@@ -1,21 +1,137 @@
-<h2>Mes tâches</h2>
+<div class="todo-list-container">
+  <h2 class="section-title">Ma Liste de Tâches</h2>
 
-<form (submit)="createTask(); $event.preventDefault()">
-  <input type="text" [(ngModel)]="newTask.title" name="title" placeholder="Titre" required>
-  <input type="text" [(ngModel)]="newTask.notes" name="notes" placeholder="Notes">
-  <input type="date" [(ngModel)]="newTask.due_date" name="due_date">
-  <button type="submit">Ajouter</button>
-</form>
+  <div class="new-task-form card">
+    <h3 class="card-title">Ajouter une nouvelle tâche</h3>
+    <div class="form-group">
+      <label for="task-title">Titre de la tâche</label>
+      <input type="text" id="task-title" [(ngModel)]="newTask.title" placeholder="Ex: Préparer la réunion client">
+    </div>
+    <div class="form-group">
+      <label for="task-notes">Notes / Commentaires</label>
+      <textarea id="task-notes" [(ngModel)]="newTask.notes" placeholder="Détails importants, rappels..."></textarea>
+    </div>
+    <div class="form-group">
+      <label for="task-due-date">Date d'échéance (optionnel)</label>
+      <input type="date" id="task-due-date" [(ngModel)]="newTask.due_date">
+    </div>
 
-<ul *ngIf="!loading">
-  <li *ngFor="let task of tasks">
-    <strong>{{ task.title }}</strong>
-    <small *ngIf="task.due_date"> (à faire pour {{ task.due_date }})</small>
-    <br>
-    <em>{{ task.notes }}</em>
-    <br>
-    <button (click)="deleteTask(task.id)">Supprimer</button>
-  </li>
-</ul>
+    <div class="subtasks-section">
+      <h4 class="subtasks-title">Sous-tâches</h4>
+      <div *ngFor="let subtask of newTask.subtasks; let i = index" class="subtask-item">
+        <input type="text" [(ngModel)]="subtask.title" placeholder="Description de la sous-tâche">
+        <button (click)="removeNewSubtask(i)" class="btn-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-red-500">
+            <path fill-rule="evenodd" d="M16.5 4.478v.227a48.842 48.842 0 0 1 3.878.519c.55.11.868.56.868 1.107V19.5a2.25 2.25 0 0 1-2.25 2.25H2.25A2.25 2.25 0 0 1 0 19.5V6.324c0-.547.318-.997.868-1.107a48.842 48.842 0 0 1 3.878-.519V4.478c0-1.105 1.12-1.998 2.5-1.998h6c1.38 0 2.5.893 2.5 1.998ZM14.25 8.625a.75.75 0 0 0-1.5 0v7.5a.75.75 0 0 0 1.5 0v-7.5ZM8.75 8.625a.75.75 0 0 0-1.5 0v7.5a.75.75 0 0 0 1.5 0v-7.5Z" clip-rule="evenodd" />
+          </svg>
+        </button>
+      </div>
+      <button (click)="addNewSubtask()" class="btn-secondary btn-small">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 mr-2">
+          <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 9a.75.75 0 0 0-1.5 0v2.25H9a.75.75 0 0 0 0 1.5h2.25v2.25a.75.75 0 0 0 1.5 0V13.5h2.25a.75.75 0 0 0 0-1.5H12.75V9Z" clip-rule="evenodd" />
+        </svg>
+        Ajouter une sous-tâche
+      </button>
+    </div>
 
-<p *ngIf="loading">Chargement...</p>
+    <button (click)="createTask()" class="btn-primary add-task-btn">Ajouter la tâche</button>
+  </div>
+
+  <div class="tasks-list">
+    <div *ngIf="loading" class="info-message">Chargement des tâches...</div>
+    <div *ngIf="noTasksAvailable" class="info-message">Aucune tâche pour le moment. Ajoutez-en une !</div>
+    <div *ngIf="allUncompletedTasksDoneAndHidden" class="info-message">Toutes les tâches sont terminées. Cliquez sur "Afficher les tâches terminées" pour les voir.</div>
+
+    <div *ngFor="let task of tasks; trackBy: trackByFn">
+      <div *ngIf="!task.completed" class="task-item card" [class.completed]="task.completed">
+        <div class="task-header">
+          <input type="checkbox" [(ngModel)]="task.completed" (change)="toggleTaskCompletion(task)">
+          <h3 class="task-title" [class.completed-text]="task.completed">{{ task.title }}</h3>
+          <span *ngIf="task.due_date" class="task-due-date">
+            Échéance: {{ task.due_date | date:'shortDate' }}
+          </span>
+          <div class="task-actions">
+            <button (click)="editTask(task)" class="btn-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-gray-500">
+                <path d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.187 1.187a.75.75 0 0 1-.364.182l-3.498.875a.75.75 0 0 0-.472.582L3.498 16.25a.75.75 0 0 0 .182.364l1.187 1.187a2.625 2.625 0 0 0 3.712 0l1.187-1.187a.75.75 0 0 1 .364-.182l.875-3.498a.75.75 0 0 0-.472-.582Z" />
+                <path d="m15.19 2.707.746.746L18.683 1.06a2.25 2.25 0 0 1 3.182 0l-.746.746a.75.75 0 0 0-.364.182l-3.498.875a.75.75 0 0 0-.472.582Z" />
+              </svg>
+            </button>
+            <button (click)="deleteTask(task.id)" class="btn-icon delete-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-red-500">
+                <path fill-rule="evenodd" d="M16.5 4.478v.227a48.842 48.842 0 0 1 3.878.519c.55.11.868.56.868 1.107V19.5a2.25 2.25 0 0 1-2.25 2.25H2.25A2.25 2.25 0 0 1 0 19.5V6.324c0-.547.318-.997.868-1.107a48.842 48.842 0 0 1 3.878-.519V4.478c0-1.105 1.12-1.998 2.5-1.998h6c1.38 0 2.5.893 2.5 1.998ZM14.25 8.625a.75.75 0 0 0-1.5 0v7.5a.75.75 0 0 0 1.5 0v-7.5ZM8.75 8.625a.75.75 0 0 0-1.5 0v7.5a.75.75 0 0 0 1.5 0v-7.5Z" clip-rule="evenodd" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <p *ngIf="task.notes" class="task-notes">{{ task.notes }}</p>
+
+        <div *ngIf="task.subtasks && task.subtasks.length > 0" class="task-subtasks">
+          <h4>Sous-tâches :</h4>
+          <ul>
+            <li *ngFor="let subtask of task.subtasks" [class.completed]="subtask.done">
+              <input type="checkbox" [(ngModel)]="subtask.done" (change)="toggleSubtaskCompletion(task, subtask)">
+              <span [class.completed-text]="subtask.done">{{ subtask.title }}</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="hasCompletedTasks" class="completed-tasks-section card">
+    <div class="completed-tasks-header" (click)="showCompletedTasks = !showCompletedTasks">
+      <h3 class="card-title">
+        Tâches terminées ({{ completedTasksCount }})
+      </h3>
+      <button class="btn-icon toggle-completed-btn">
+        <svg *ngIf="!showCompletedTasks" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+          <path fill-rule="evenodd" d="M12.53 16.28a.75.75 0 0 1-1.06 0l-7.5-7.5a.75.75 0 0 1 1.06-1.06L12 14.69l6.97-6.97a.75.75 0 1 1 1.06 1.06l-7.5 7.5Z" clip-rule="evenodd" />
+        </svg>
+        <svg *ngIf="showCompletedTasks" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+          <path fill-rule="evenodd" d="M11.47 7.72a.75.75 0 0 1 1.06 0l7.5 7.5a.75.75 0 1 1-1.06 1.06L12 9.31l-6.97 6.97a.75.75 0 0 1-1.06-1.06l7.5-7.5Z" clip-rule="evenodd" />
+        </svg>
+      </button>
+    </div>
+
+    <div *ngIf="showCompletedTasks" class="completed-tasks-list">
+      <div *ngFor="let task of tasks; trackBy: trackByFn">
+        <div *ngIf="task.completed" class="task-item card" [class.completed]="task.completed">
+          <div class="task-header">
+            <input type="checkbox" [(ngModel)]="task.completed" (change)="toggleTaskCompletion(task)">
+            <h3 class="task-title" [class.completed-text]="task.completed">{{ task.title }}</h3>
+            <span *ngIf="task.due_date" class="task-due-date">
+              Échéance: {{ task.due_date | date:'shortDate' }}
+            </span>
+            <div class="task-actions">
+              <button (click)="editTask(task)" class="btn-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-gray-500">
+                  <path d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.187 1.187a.75.75 0 0 1-.364.182l-3.498.875a.75.75 0 0 0-.472.582L3.498 16.25a.75.75 0 0 0 .182.364l1.187 1.187a2.625 2.625 0 0 0 3.712 0l1.187-1.187a.75.75 0 0 1 .364-.182l.875-3.498a.75.75 0 0 0-.472-.582Z" />
+                  <path d="m15.19 2.707.746.746L18.683 1.06a2.25 2.25 0 0 1 3.182 0l-.746.746a.75.75 0 0 0-.364.182l-3.498.875a.75.75 0 0 0-.472.582Z" />
+                </svg>
+              </button>
+              <button (click)="deleteTask(task.id)" class="btn-icon delete-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 text-red-500">
+                  <path fill-rule="evenodd" d="M16.5 4.478v.227a48.842 48.842 0 0 1 3.878.519c.55.11.868.56.868 1.107V19.5a2.25 2.25 0 0 1-2.25 2.25H2.25A2.25 2.25 0 0 1 0 19.5V6.324c0-.547.318-.997.868-1.107a48.842 48.842 0 0 1 3.878-.519V4.478c0-1.105 1.12-1.998 2.5-1.998h6c1.38 0 2.5.893 2.5 1.998ZM14.25 8.625a.75.75 0 0 0-1.5 0v7.5a.75.75 0 0 0 1.5 0v-7.5ZM8.75 8.625a.75.75 0 0 0-1.5 0v7.5a.75.75 0 0 0 1.5 0v-7.5Z" clip-rule="evenodd" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <p *ngIf="task.notes" class="task-notes">{{ task.notes }}</p>
+
+          <div *ngIf="task.subtasks && task.subtasks.length > 0" class="task-subtasks">
+            <h4>Sous-tâches :</h4>
+            <ul>
+              <li *ngFor="let subtask of task.subtasks" [class.completed]="subtask.done">
+                <input type="checkbox" [(ngModel)]="subtask.done" (change)="toggleSubtaskCompletion(task, subtask)">
+                <span [class.completed-text]="subtask.done">{{ subtask.title }}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

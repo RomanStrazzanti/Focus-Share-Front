@@ -13,9 +13,9 @@ import { TasksComponent } from './tasks/tasks';
   imports: [
     CommonModule,
     RouterOutlet, 
-    TimerComponent,
+    //TimerComponent,
     HeaderComponent,
-    TasksComponent
+    //TasksComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
