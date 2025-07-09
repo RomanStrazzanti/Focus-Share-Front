@@ -1,24 +1,11 @@
 <div class="chat-layout">
-  <!-- Sidebar -->
-  <aside class="chat-sidebar">
-    <button (click)="createNewConversation()">➕ Nouvelle conversation</button>
-    <ul>
-      <li *ngFor="let conv of conversations"
-          [class.active]="conv.id === selectedConversationId"
-          (click)="selectConversation(conv.id)">
-        {{ conv.title }}
-      </li>
-    </ul>
-  </aside>
-
-  <!-- Main chat -->
   <div class="chat-container">
     <div class="chat-actions">
-      <button (click)="resetCurrentConversation()">♻️ Réinitialiser</button>
+      <button (click)="resetConversation()">♻️ Réinitialiser</button>
     </div>
 
     <div class="messages">
-      <div *ngFor="let msg of selectedConversation.messages"
+      <div *ngFor="let msg of messages"
            [ngClass]="{'user-msg': msg.from === 'user', 'bot-msg': msg.from === 'bot'}">
         <strong>{{ msg.from === 'user' ? 'Vous' : 'ProgressIA' }} :</strong>
         <div [innerHTML]="formatMessage(msg.text)"></div>

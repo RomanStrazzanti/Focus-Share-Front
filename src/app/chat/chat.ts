@@ -6,7 +6,6 @@ import { ChatService } from '../services/chat.service';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 
 type Message = { text: string; from: 'user' | 'bot' };
-type Conversation = { id: string; title: string; messages: Message[] };
 
 @Component({
   selector: 'app-chat',
@@ -16,8 +15,7 @@ type Conversation = { id: string; title: string; messages: Message[] };
   styleUrls: ['./chat.css']
 })
 export class ChatComponent {
-  conversations: Conversation[] = [];
-  selectedConversationId = '';
+  messages: Message[] = [];
   newMessage = '';
   loading = false;
 
@@ -27,31 +25,8 @@ export class ChatComponent {
     private cdr: ChangeDetectorRef
   ) {}
 
-  ngOnInit() {
-    this.createNewConversation();
-  }
-
-  get selectedConversation(): Conversation {
-    return this.conversations.find(c => c.id === this.selectedConversationId)!;
-  }
-
-  createNewConversation() {
-    const id = crypto.randomUUID();
-    const conversation: Conversation = {
-      id,
-      title: `Conversation ${this.conversations.length + 1}`,
-      messages: []
-    };
-    this.conversations.push(conversation);
-    this.selectedConversationId = id;
-  }
-
-  selectConversation(id: string) {
-    this.selectedConversationId = id;
-  }
-
-  resetCurrentConversation() {
-    this.selectedConversation.messages = [];
+  resetConversation() {
+    this.messages = [];
   }
 
   formatMessage(text: string): SafeHtml {
@@ -66,16 +41,15 @@ export class ChatComponent {
     const prompt = this.newMessage.trim();
     if (!prompt) return;
 
-    const conversation = this.selectedConversation;
     const userMsg: Message = { text: prompt, from: 'user' };
     const botMsg: Message = { text: '', from: 'bot' };
 
-    conversation.messages.push(userMsg, botMsg);
+    this.messages.push(userMsg, botMsg);
     this.newMessage = '';
     this.loading = true;
 
     // 🔁 Construire le prompt contextuel avec l'historique
-    const contextPrompt = conversation.messages
+    const contextPrompt = this.messages
       .map(msg =>
         msg.from === 'user' ? `Utilisateur : ${msg.text}` : `Bot : ${msg.text}`
       )
@@ -92,7 +66,6 @@ export class ChatComponent {
         const url = URL.createObjectURL(pdfBlob);
         botMsg.text += `<br><a href="${url}" download="focus-pdf.pdf" target="_blank">📄 Télécharger le PDF</a>`;
       }
-      
     } catch (err) {
       botMsg.text = 'Erreur lors de la génération.';
       console.error(err);
