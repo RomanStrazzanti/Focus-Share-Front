@@ -1,4 +1,5 @@
 // src/app/tasks/tasks.component.ts
+
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CommonModule, DatePipe } from '@angular/common';
@@ -49,10 +50,6 @@ export class TasksComponent implements OnInit, OnDestroy {
 
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
-  trackByFn(index: number, item: any): any {
-    return item.id;
-  }
-
   ngOnInit() {
     const token = localStorage.getItem('access_token');
     if (token) {
@@ -92,29 +89,58 @@ export class TasksComponent implements OnInit, OnDestroy {
     return {};
   }
 
-  // Fonction de tri pour les tâches : non complétées d'abord, puis complétées.
-  // Dans chaque groupe, tri par date de création (plus récent en premier).
+  /**
+   * Fonction de tri pour les tâches :
+   * 1. Non complétées avant complétées.
+   * 2. Si même état de complétion :
+   * a. Tâches avec date d'échéance avant celles sans.
+   * b. Si deux dates d'échéance : tri par date d'échéance ascendante (plus proche d'abord).
+   * c. Si pas de date d'échéance : tri par date de création descendante (plus récente d'abord).
+   */
   private sortTasks(): void {
     this.tasks.sort((a, b) => {
-      // Les tâches non complétées viennent avant les complétées
+      // 1. Tri par état de complétion (non complétées d'abord)
       if (a.completed && !b.completed) {
         return 1;
       }
       if (!a.completed && b.completed) {
         return -1;
       }
-      // Si les deux ont le même état de complétion, tri par created_at (plus récent en premier)
+
+      // Si le même état de complétion, on passe au tri secondaire
+      // Gérer les dates d'échéance (due_date)
+      const aHasDueDate = !!a.due_date;
+      const bHasDueDate = !!b.due_date;
+
+      // 2a. Tâches avec date d'échéance avant celles sans
+      if (aHasDueDate && !bHasDueDate) {
+        return -1; // a vient avant b
+      }
+      if (!aHasDueDate && bHasDueDate) {
+        return 1; // b vient avant a
+      }
+
+      // 2b. Si les deux ont une date d'échéance, tri par date d'échéance ascendante
+      if (aHasDueDate && bHasDueDate) {
+        const dateA = new Date(a.due_date!);
+        const dateB = new Date(b.due_date!);
+        if (dateA.getTime() !== dateB.getTime()) {
+          return dateA.getTime() - dateB.getTime();
+        }
+      }
+
+      // 2c. Si les deux n'ont pas de date d'échéance ou si les dates d'échéance sont identiques,
+      // tri par date de création descendante (plus récente en premier)
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
   }
 
-  // --- NOUVELLES PROPRIÉTÉS ACCESSEURS (GETTERS) ---
+  // --- PROPRIÉTÉS ACCESSEURS (GETTERS) ---
   get noTasksAvailable(): boolean {
     return !this.loading && this.tasks.length === 0;
   }
 
   get allUncompletedTasksDoneAndHidden(): boolean {
-    // Cette condition est pour le message "Toutes les tâches sont terminées..."
     return !this.loading && this.tasks.filter(t => !t.completed).length === 0 && this.tasks.filter(t => t.completed).length > 0 && !this.showCompletedTasks;
   }
 
@@ -125,8 +151,13 @@ export class TasksComponent implements OnInit, OnDestroy {
   get completedTasksCount(): number {
     return this.tasks.filter(t => t.completed).length;
   }
-  // --- FIN DES NOUVELLES PROPRIÉTÉS ACCESSEURS ---
+  // --- FIN DES PROPRIÉTÉS ACCESSEURS ---
 
+  // --- NOUVELLE FONCTION TRACKBY ---
+  trackByFn(index: number, item: any): any {
+    return item.id;
+  }
+  // --- FIN NOUVELLE FONCTION TRACKBY ---
 
   loadTasks() {
     if (!this.currentUserId) {
@@ -171,7 +202,7 @@ export class TasksComponent implements OnInit, OnDestroy {
     };
 
     this.tasks.unshift(optimisticTask);
-    this.sortTasks();
+    this.sortTasks(); // Applique le tri après l'ajout optimiste
     const originalNewTask = { ...this.newTask };
     this.resetNewTaskForm();
     this.cdr.detectChanges();
@@ -182,7 +213,7 @@ export class TasksComponent implements OnInit, OnDestroy {
         if (index !== -1) {
           this.tasks[index] = taskFromServer;
         }
-        this.sortTasks();
+        this.sortTasks(); // Applique le tri après la synchronisation
         this.cdr.detectChanges();
         console.log('Tâche créée et synchronisée:', taskFromServer);
       },
@@ -204,13 +235,15 @@ export class TasksComponent implements OnInit, OnDestroy {
     const originalCompleted = task.completed;
     const originalSubtasks = JSON.parse(JSON.stringify(task.subtasks));
 
+    // Mettre à jour l'état de la tâche et des sous-tâches
+    task.completed = !task.completed;
     if (task.completed) {
       task.subtasks.forEach((subtask: Subtask) => subtask.done = true);
     } else {
       task.subtasks.forEach((subtask: Subtask) => subtask.done = false);
     }
 
-    this.sortTasks();
+    this.sortTasks(); // Applique le tri après la modification
     this.cdr.detectChanges();
 
     try {
@@ -225,7 +258,7 @@ export class TasksComponent implements OnInit, OnDestroy {
       console.error('Exception lors de la mise à jour de la tâche, annulation optimiste:', e);
       task.completed = originalCompleted;
       task.subtasks = originalSubtasks;
-      this.sortTasks();
+      this.sortTasks(); // Re-tri en cas d'erreur
       this.cdr.detectChanges();
     }
   }
@@ -241,13 +274,14 @@ export class TasksComponent implements OnInit, OnDestroy {
 
     subtask.done = !subtask.done;
 
+    // Si toutes les sous-tâches sont terminées, marquer la tâche principale comme terminée
     if (task.subtasks.every((st: Subtask) => st.done)) {
       task.completed = true;
     } else {
       task.completed = false;
     }
 
-    this.sortTasks();
+    this.sortTasks(); // Applique le tri après la modification
     this.cdr.detectChanges();
 
     try {
@@ -262,7 +296,7 @@ export class TasksComponent implements OnInit, OnDestroy {
       console.error('Exception lors de la mise à jour de la sous-tâche, annulation optimiste:', e);
       subtask.done = originalSubtaskDone;
       task.completed = originalTaskCompleted;
-      this.sortTasks();
+      this.sortTasks(); // Re-tri en cas d'erreur
       this.cdr.detectChanges();
     }
   }
