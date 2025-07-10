@@ -35,5 +35,9 @@ export const routes: Routes = [
   { 
     path: 'tasks',
     loadComponent: () => import('./tasks/tasks').then(m => m.TasksComponent),
+  },
+  {
+    path: 'create-user',
+    loadComponent: () => import('./create-user/create-user').then(m => m.CreateUserComponent),
   }
 ];

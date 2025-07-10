@@ -49,7 +49,7 @@ export class TasksComponent implements OnInit, OnDestroy {
   showNewTaskForm: boolean = false; // Propriété pour contrôler l'affichage du formulaire de nouvelle tâche
   errorMessage: string | null = null; // Pour afficher les messages d'erreur
 
-  private apiUrl = 'http://localhost:3000/api/tasks';
+  private apiUrl = 'http://10.74.18.65:3000/api/tasks';
 
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 

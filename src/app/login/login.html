@@ -1,8 +1,14 @@
 <div class="login-container">
-  <h2>Connexion à Supabase</h2>
+  <!-- 🔹 Ajout du logo -->
+  <img src="../../assets/img/Logo.png" alt="Logo Focus&Share" class="logo" />
+
+  <h2>Connexion à Focus&Share</h2>
+
   <input type="email" [(ngModel)]="email" placeholder="Email" />
-  <input type="password" [(ngModel)]="password" type="password" placeholder="Mot de passe" />
+  <input type="password" [(ngModel)]="password" placeholder="Mot de passe" />
+
   <button (click)="login()">Se connecter</button>
+  <button class="secondary-btn" (click)="goToCreateUser()">Créer un compte</button>
 
   <div *ngIf="token">
     <p><strong>Access Token :</strong></p>

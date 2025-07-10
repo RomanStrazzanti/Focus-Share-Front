@@ -45,3 +45,26 @@ textarea {
   padding: 0.6rem;
   font-family: monospace;
 }
+
+.secondary-btn {
+  margin-top: 10px;
+  width: 100%;
+  padding: 0.8rem;
+  background-color: #e0e0e0;
+  color: #333;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.secondary-btn:hover {
+  background-color: #cacaca;
+}
+
+.logo {
+  display: block;
+  max-width: 120px;
+  margin: 0 auto 1rem auto;
+}

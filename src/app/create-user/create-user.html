@@ -1,0 +1,10 @@
+<div class="create-user-container">
+  <h2>Créer un utilisateur</h2>
+  <input type="email" [(ngModel)]="email" placeholder="Email" />
+  <input type="password" [(ngModel)]="password" placeholder="Mot de passe" />
+  <input type="password" [(ngModel)]="confirmPassword" placeholder="Confirmez le mot de passe" />
+
+  <button (click)="createUser()">Créer</button>
+
+  <p *ngIf="message">{{ message }}</p>
+</div>

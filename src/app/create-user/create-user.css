@@ -1,0 +1,15 @@
+.create-user-container {
+  width: 300px;
+  margin: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+input, button {
+  padding: 8px;
+  font-size: 14px;
+}
+button {
+  cursor: pointer;
+}

@@ -34,7 +34,7 @@ export class MessagesComponent implements OnInit {
  
   currentUserId: string | null = '5b681e99-5077-4573-bca7-a5d03c6171e0';
  
-  private apiBase = 'http://localhost:3000/api/private-messages';
+  private apiBase = 'http://10.74.18.65:3000/api/private-messages';
  
   constructor(private http: HttpClient) {}
  

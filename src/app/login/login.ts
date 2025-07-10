@@ -33,4 +33,7 @@ export class LoginComponent {
     console.log('✅ Access Token :', this.token);
     alert('Connexion réussie ! Le token est dans la console.');
   }
+  goToCreateUser() {
+    this.router.navigate(['/create-user']);
+  }
 }

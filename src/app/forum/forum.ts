@@ -36,7 +36,7 @@ export class ForumComponent implements OnInit {
     const headers = { Authorization: `Bearer ${token}` };
  
     console.log('Token2:', token);
-    this.http.get<Post[]>('http://localhost:3000/api/forum-posts', { headers }).subscribe({
+    this.http.get<Post[]>('http://10.74.18.65:3000/api/forum-posts', { headers }).subscribe({
       next: (data) => {
         this.posts = data;
         this.cd.detectChanges(); // 👈 force Angular à mettre à jour la vue
@@ -51,7 +51,7 @@ export class ForumComponent implements OnInit {
     const token = localStorage.getItem('access_token');
     const headers = { Authorization: `Bearer ${token}` };
 
-    this.http.post<Post>('http://localhost:3000/api/forum-posts', { content: this.newPostContent }, { headers }).subscribe({
+    this.http.post<Post>('http://10.74.18.65:3000/api/forum-posts', { content: this.newPostContent }, { headers }).subscribe({
       next: () => {
         this.newPostContent = '';
         this.loadPosts();
@@ -71,7 +71,7 @@ export class ForumComponent implements OnInit {
     const token = localStorage.getItem('access_token');
     const headers = { Authorization: `Bearer ${token}` };
 
-    this.http.post<Post>('http://localhost:3000/api/forum-posts', {
+    this.http.post<Post>('http://10.74.18.65:3000/api/forum-posts', {
       content: this.replyContent,
       parent_post_id: this.replyToPostId
     }, { headers }).subscribe({
