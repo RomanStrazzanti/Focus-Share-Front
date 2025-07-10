@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class ChatService {
-  private apiUrl = 'http://10.74.18.53:11434/api/generate';
+  private apiUrl = '/api/generate';
 
   async streamResponse(prompt: string, onChunk: (text: string) => void): Promise<void> {
     const response = await fetch(this.apiUrl, {
