@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ChatService } from '../services/chat.service';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import { environment } from '../../environments/environment';
 
 type Message = { text: string; from: 'user' | 'bot' };
 
