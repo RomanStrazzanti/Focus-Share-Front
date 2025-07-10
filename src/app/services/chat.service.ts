@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-
+ 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
   private apiUrl = environment.apiUrl;
-
+ 
   async streamResponse(prompt: string, onChunk: (text: string) => void): Promise<void> {
     const response = await fetch(this.apiUrl, {
       method: 'POST',
@@ -17,25 +17,25 @@ export class ChatService {
         stream: true
       })
     });
-
+ 
     if (!response.body) {
       throw new Error('No response body');
     }
-
+ 
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
     let buffer = '';
-
+ 
     while (true) {
       const { value, done } = await reader.read();
       if (done) break;
-
+ 
       buffer += decoder.decode(value, { stream: true });
-
+ 
       // Chaque ligne est un JSON chunk
       const parts = buffer.split('\n');
       buffer = parts.pop() || '';
-
+ 
       for (const part of parts) {
         if (part.trim() === '') continue;
         try {

@@ -5,9 +5,9 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ChatService } from '../services/chat.service';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import { environment } from '../../environments/environment';
-
+ 
 type Message = { text: string; from: 'user' | 'bot' };
-
+ 
 @Component({
   selector: 'app-chat',
   standalone: true,
@@ -19,17 +19,17 @@ export class ChatComponent {
   messages: Message[] = [];
   newMessage = '';
   loading = false;
-
+ 
   constructor(
     private chatService: ChatService,
     private sanitizer: DomSanitizer,
     private cdr: ChangeDetectorRef
   ) {}
-
+ 
   resetConversation() {
     this.messages = [];
   }
-
+ 
   formatMessage(text: string): SafeHtml {
     const html = text
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
@@ -37,31 +37,31 @@ export class ChatComponent {
       .replace(/\n/g, '<br>');
     return this.sanitizer.bypassSecurityTrustHtml(html);
   }
-
+ 
   async sendMessage() {
     const prompt = this.newMessage.trim();
     if (!prompt) return;
-
+ 
     const userMsg: Message = { text: prompt, from: 'user' };
     const botMsg: Message = { text: '', from: 'bot' };
-
+ 
     this.messages.push(userMsg, botMsg);
     this.newMessage = '';
     this.loading = true;
-
+ 
     // 🔁 Construire le prompt contextuel avec l'historique
     const contextPrompt = this.messages
       .map(msg =>
         msg.from === 'user' ? `Utilisateur : ${msg.text}` : `Bot : ${msg.text}`
       )
       .join('\n') + '\nBot :';
-
+ 
     try {
       await this.chatService.streamResponse(contextPrompt, (chunk: string) => {
         botMsg.text += chunk;
         this.cdr.detectChanges();
       });
-
+ 
       if (/pdf/i.test(prompt)) {
         const pdfBlob = await this.generatePdf(botMsg.text);
         const url = URL.createObjectURL(pdfBlob);
@@ -75,16 +75,16 @@ export class ChatComponent {
       this.cdr.detectChanges();
     }
   }
-
+ 
   async generatePdf(text: string): Promise<Blob> {
     const pdfDoc = await PDFDocument.create();
     const page = pdfDoc.addPage();
     const { width, height } = page.getSize();
-
+ 
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const fontSize = 12;
     const lines = text.match(/.{1,100}/g) || [];
-
+ 
     page.drawText(lines.join('\n'), {
       x: 50,
       y: height - 50,
@@ -93,7 +93,7 @@ export class ChatComponent {
       color: rgb(0, 0, 0),
       lineHeight: 14,
     });
-
+ 
     const pdfBytes = await pdfDoc.save();
     return new Blob([pdfBytes], { type: 'application/pdf' });
   }
