@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
-  private apiUrl = '/api/generate';
+  private apiUrl = environment.apiUrl;
 
   async streamResponse(prompt: string, onChunk: (text: string) => void): Promise<void> {
     const response = await fetch(this.apiUrl, {
